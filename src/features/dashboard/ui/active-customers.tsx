@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import { formatInteger, formatPercent } from "./formater";
-import { DashboardCard, DashboardCardTitle } from "./dashboard-card";
+import { formatInteger, formatPercent } from "@/helpers/chart-format.helper";
+import { DashboardCard, DashboardCardTitle } from "@/components/dashboard/dashboard-card";
 
 const LINE_COUNT = 64;
 

@@ -8,8 +8,8 @@ import {
   DASHBOARD_LOCALE,
   formatFullCurrency,
   parseIsoCalendarDate,
-} from "./formater";
-import { DashboardCard, DashboardCardTitle } from "./dashboard-card";
+} from "@/helpers/chart-format.helper";
+import { DashboardCard, DashboardCardTitle } from "@/components/dashboard/dashboard-card";
 
 function formatLongUsDate(isoDate: string) {
   const date = parseIsoCalendarDate(isoDate);

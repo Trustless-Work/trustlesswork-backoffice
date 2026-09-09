@@ -1,6 +1,6 @@
 "use client";
 
-import type { UseFormReturn } from "react-hook-form";
+import { useWatch, type UseFormReturn } from "react-hook-form";
 import {
   FormControl,
   FormField,
@@ -36,45 +36,65 @@ function getDefaultPresetTrustline() {
   };
 }
 
+function applyTrustlineToggle(
+  form: UseFormReturn<CreateEscrowFormData>,
+  checked: boolean,
+) {
+  if (checked) {
+    form.setValue("trustline.address", "", { shouldDirty: true });
+    form.setValue("trustline.symbol", "", { shouldDirty: true });
+    form.clearErrors(["trustline.address", "trustline.symbol"]);
+    return;
+  }
+
+  const preset = getDefaultPresetTrustline();
+  form.setValue("trustline.address", preset.address, {
+    shouldDirty: true,
+    shouldValidate: true,
+  });
+  form.setValue("trustline.symbol", preset.symbol, {
+    shouldDirty: true,
+    shouldValidate: true,
+  });
+}
+
 export const EscrowTrustlineCustomSwitch = ({
   form,
   disabled = false,
 }: EscrowTrustlineFieldProps) => {
-  const isCustom = form.watch("trustline.isCustom");
-
-  const handleCustomToggle = (checked: boolean) => {
-    form.setValue("trustline.isCustom", checked, { shouldValidate: true });
-
-    if (checked) {
-      form.setValue("trustline.address", "", { shouldValidate: true });
-      form.setValue("trustline.symbol", "", { shouldValidate: true });
-      return;
-    }
-
-    const preset = getDefaultPresetTrustline();
-    form.setValue("trustline.address", preset.address, {
-      shouldValidate: true,
-    });
-    form.setValue("trustline.symbol", preset.symbol, { shouldValidate: true });
-  };
-
   return (
-    <div className="flex items-center gap-2">
-      <Switch
-        id="trustline-custom"
-        size="sm"
-        checked={isCustom}
-        onCheckedChange={handleCustomToggle}
-        disabled={disabled}
-        aria-label="Use custom trustline"
-      />
-      <Label
-        htmlFor="trustline-custom"
-        className="cursor-pointer text-sm font-normal text-muted-foreground"
-      >
-        Custom Trustline
-      </Label>
-    </div>
+    <FormField
+      control={form.control}
+      name="trustline.isCustom"
+      render={({ field }) => (
+        <div className="flex items-center gap-2">
+          <Switch
+            size="sm"
+            checked={Boolean(field.value)}
+            onCheckedChange={(checked) => {
+              field.onChange(checked);
+              applyTrustlineToggle(form, checked);
+            }}
+            disabled={disabled}
+            aria-label="Use custom trustline"
+          />
+          <Label
+            className="cursor-pointer text-sm font-normal text-muted-foreground"
+            onClick={() => {
+              if (disabled) {
+                return;
+              }
+
+              const nextChecked = !field.value;
+              field.onChange(nextChecked);
+              applyTrustlineToggle(form, nextChecked);
+            }}
+          >
+            Custom Trustline
+          </Label>
+        </div>
+      )}
+    />
   );
 };
 
@@ -82,7 +102,10 @@ export const EscrowTrustlineAddressField = ({
   form,
   disabled = false,
 }: EscrowTrustlineFieldProps) => {
-  const isCustom = form.watch("trustline.isCustom");
+  const isCustom = useWatch({
+    control: form.control,
+    name: "trustline.isCustom",
+  });
 
   return (
     <FormField
@@ -140,7 +163,10 @@ export const EscrowTrustlineSymbolField = ({
   form,
   disabled = false,
 }: EscrowTrustlineFieldProps) => {
-  const isCustom = form.watch("trustline.isCustom");
+  const isCustom = useWatch({
+    control: form.control,
+    name: "trustline.isCustom",
+  });
 
   return (
     <FormField

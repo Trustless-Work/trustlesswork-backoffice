@@ -1,5 +1,6 @@
 "use client";
 
+import { createElement } from "react";
 import { XIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -7,7 +8,18 @@ import {
   capitalizeLabel,
   getEscrowRoleFilterIcon,
 } from "@/features/escrows/ui/escrow-filter-labels";
-import type { EscrowListFilters } from "@/features/escrows/types/escrow.types";
+import type {
+  EscrowListFilters,
+  EscrowRoleFilter,
+} from "@/features/escrows/types/escrow.types";
+
+type RoleFilterIconProps = {
+  role: EscrowRoleFilter;
+  className?: string;
+};
+
+const RoleFilterIcon = ({ role, className }: RoleFilterIconProps) =>
+  createElement(getEscrowRoleFilterIcon(role), { className });
 
 type EscrowActiveFilterChipsProps = {
   draft: EscrowListFilters;
@@ -25,10 +37,7 @@ export const EscrowActiveFilterChips = ({
   onClearParticipant,
   onClearRole,
   onClearCreatedRange,
-}: EscrowActiveFilterChipsProps) => {
-  const RoleIcon = draft.role ? getEscrowRoleFilterIcon(draft.role) : null;
-
-  return (
+}: EscrowActiveFilterChipsProps) => (
   <div className="mt-3 flex flex-wrap gap-2">
     {draft.status ? (
       <Badge variant="outline" className="gap-1 capitalize">
@@ -62,9 +71,9 @@ export const EscrowActiveFilterChips = ({
         </button>
       </Badge>
     ) : null}
-    {draft.role && RoleIcon ? (
+    {draft.role ? (
       <Badge variant="outline" className="gap-1 capitalize">
-        <RoleIcon className="size-3.5" />
+        <RoleFilterIcon role={draft.role} className="size-3.5" />
         {ROLE_LABELS[draft.role]}
         <button type="button" aria-label="Clear role" onClick={onClearRole}>
           <XIcon className="size-3" />
@@ -84,5 +93,4 @@ export const EscrowActiveFilterChips = ({
       </Badge>
     ) : null}
   </div>
-  );
-};
+);

@@ -6,11 +6,30 @@ import { ChevronLeftIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FloatingPaths } from "@/components/ui/floating-paths";
 
+/**
+ * Split-screen shell for unauthenticated pages.
+ *
+ * Lives in `components/shared/` rather than a feature folder because both auth
+ * systems use it: the wallet `/login` view and the Supabase `/admin/login` view.
+ * A feature importing another feature's UI is not allowed, and duplicating this
+ * would be worse.
+ *
+ * Every prop is optional and defaults to the original wallet-login copy, so
+ * `/login` renders exactly as before.
+ */
 type AuthPageLayoutProps = {
   children: React.ReactNode;
+  quote?: string;
+  attribution?: string;
+  homeHref?: string;
 };
 
-export const AuthPageLayout = ({ children }: AuthPageLayoutProps) => {
+export const AuthPageLayout = ({
+  children,
+  quote = "Integrate trust in hours, not months.",
+  attribution = "~ Trustless Work",
+  homeHref = "/",
+}: AuthPageLayoutProps) => {
   return (
     <main className="relative md:h-screen md:overflow-hidden lg:grid lg:grid-cols-2">
       <section className="relative hidden h-full flex-col border-r bg-secondary p-10 lg:flex dark:bg-secondary/10">
@@ -18,11 +37,9 @@ export const AuthPageLayout = ({ children }: AuthPageLayoutProps) => {
 
         <div className="relative z-10 mt-auto">
           <blockquote className="flex flex-col gap-2">
-            <p className="text-xl">
-              &ldquo;Integrate trust in hours, not months.&rdquo;
-            </p>
+            <p className="text-xl">&ldquo;{quote}&rdquo;</p>
             <footer className="font-mono text-sm font-semibold">
-              ~ Trustless Work
+              {attribution}
             </footer>
           </blockquote>
         </div>
@@ -33,7 +50,7 @@ export const AuthPageLayout = ({ children }: AuthPageLayoutProps) => {
         </div>
       </section>
 
-      <section className="relative flex min-h-screen flex-col justify-center px-8 lg:h-full lg:min-h-0">
+      <section className="relative flex min-h-screen flex-col justify-center overflow-y-auto px-8 lg:h-full lg:min-h-0">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10 overflow-hidden opacity-60"
@@ -44,14 +61,14 @@ export const AuthPageLayout = ({ children }: AuthPageLayoutProps) => {
         </div>
 
         <Button asChild className="absolute top-7 left-5" variant="ghost">
-          <Link href="/">
+          <Link href={homeHref}>
             <ChevronLeftIcon data-icon="inline-start" />
             Home
           </Link>
         </Button>
 
-        <div className="mx-auto w-full max-w-sm space-y-4">
-          <Link href="/" className="mx-auto">
+        <div className="mx-auto flex w-full max-w-sm flex-col gap-4 py-16">
+          <Link href={homeHref} className="mx-auto">
             <Image
               src="/icon.png"
               alt="Trustless Work"

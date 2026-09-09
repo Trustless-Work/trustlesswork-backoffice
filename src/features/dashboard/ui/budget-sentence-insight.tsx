@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 import { MessageCircle, PieChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { formatPercent } from "./formater";
-import { DashboardCard } from "./dashboard-card";
+import { formatPercent } from "@/helpers/chart-format.helper";
+import { DashboardCard } from "@/components/dashboard/dashboard-card";
 
 type BudgetSentenceInsightProps = {
   className?: string;

@@ -1,5 +1,6 @@
 "use client";
 
+import { createElement } from "react";
 import Link from "next/link";
 import { ExternalLinkIcon, InboxIcon } from "lucide-react";
 import { NoData } from "@/components/shared/NoData";
@@ -33,9 +34,16 @@ function formatEventDate(value: string): string {
   }).format(date);
 }
 
+type EscrowEventIconProps = {
+  kind: string;
+  className?: string;
+};
+
+const EscrowEventIcon = ({ kind, className }: EscrowEventIconProps) =>
+  createElement(getEscrowEventIcon(kind), { className });
+
 const EventRow = ({ event }: { event: EscrowEvent }) => {
   const { currentNetwork } = useNetwork();
-  const Icon = getEscrowEventIcon(event.kind);
   const txUrl = event.txHash
     ? getStellarExpertTransactionUrl(currentNetwork, event.txHash)
     : null;
@@ -48,7 +56,7 @@ const EventRow = ({ event }: { event: EscrowEvent }) => {
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-3">
           <div className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-card">
-            <Icon className="size-4 text-muted-foreground" />
+            <EscrowEventIcon kind={event.kind} className="size-4 text-muted-foreground" />
           </div>
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">

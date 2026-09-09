@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { AuthDivider } from "@/components/ui/auth-divider";
-import { AuthPageLayout } from "@/features/auth/ui/AuthPageLayout";
+import { AuthPageLayout } from "@/components/shared/AuthPageLayout";
 import { WalletLoginButton } from "@/features/auth/ui/WalletLoginButton";
 import { RegisterForm } from "@/features/auth/ui/RegisterForm";
 import { useWalletAuth } from "@/features/auth/hooks/useWalletAuth";

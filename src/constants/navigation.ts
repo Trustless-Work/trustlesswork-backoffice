@@ -5,6 +5,11 @@ import {
   LayoutDashboardIcon,
   WebhookIcon,
 } from "lucide-react";
+import {
+  ANALYTICS_TABS,
+  DEFAULT_ANALYTICS_TAB,
+} from "@/features/admin-analytics/constants/analytics-tabs";
+import type { NavSearchFallback } from "@/helpers/nav-active.helper";
 
 export type DashboardNavSubItem = {
   title: string;
@@ -19,6 +24,7 @@ export type DashboardNavItem = {
   icon: LucideIcon;
   external?: boolean;
   items?: DashboardNavSubItem[];
+  searchFallback?: NavSearchFallback;
 };
 
 export type DashboardNavGroup = {
@@ -55,6 +61,26 @@ export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
         title: "Webhooks",
         url: "/dashboard/webhooks",
         icon: WebhookIcon,
+      },
+    ],
+  },
+];
+
+/** Backoffice sidebar — same shape as the dashboard, different destinations. */
+export const ADMIN_NAV_GROUPS: DashboardNavGroup[] = [
+  {
+    label: "Platform",
+    items: [
+      {
+        title: "Dashboard",
+        url: "/admin",
+        icon: LayoutDashboardIcon,
+        searchFallback: { tab: DEFAULT_ANALYTICS_TAB },
+        items: ANALYTICS_TABS.map((tab) => ({
+          title: tab.label,
+          url: `/admin?tab=${tab.id}`,
+          icon: tab.icon,
+        })),
       },
     ],
   },

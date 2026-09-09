@@ -1,9 +1,13 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
-import { formatAssetAmount, isUsdcSymbol } from "@/helpers/format.helper";
+import {
+  formatAssetAmount,
+  isUsdcSymbol,
+  isUsdtSymbol,
+} from "@/helpers/format.helper";
 import { cn } from "@/lib/utils";
 
-type UsdcAmountSize = "sm" | "md" | "lg" | "xl" | "2xl";
+export type UsdcAmountSize = "sm" | "md" | "lg" | "xl" | "2xl";
 
 type UsdcAmountProps = {
   amount: number;
@@ -46,6 +50,8 @@ export const UsdcAmount = ({
   emphasis = false,
 }: UsdcAmountProps) => {
   const isUsdc = isUsdcSymbol(symbol);
+  const isUsdt = isUsdtSymbol(symbol);
+  const hasBrandedIcon = isUsdc || isUsdt;
   const iconSize = iconSizes[size];
   const formattedAmount = formatAssetAmount(amount);
 
@@ -65,6 +71,16 @@ export const UsdcAmount = ({
           className={cn("shrink-0 rounded-full", iconClassName)}
         />
       ) : null}
+      {isUsdt ? (
+        <Image
+          src="/usdt.svg"
+          alt="USDT"
+          width={iconSize}
+          height={iconSize}
+          unoptimized
+          className={cn("shrink-0 rounded-full", iconClassName)}
+        />
+      ) : null}
       <span
         className={cn(
           "truncate font-medium",
@@ -72,7 +88,7 @@ export const UsdcAmount = ({
           emphasis && "font-semibold",
         )}
       >
-        {isUsdc ? formattedAmount : `${formattedAmount} ${symbol}`}
+        {hasBrandedIcon ? formattedAmount : `${formattedAmount} ${symbol}`}
       </span>
     </span>
   );

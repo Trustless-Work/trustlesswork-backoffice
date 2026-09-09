@@ -3,8 +3,8 @@ import { cn } from "@/lib/utils";
 import { Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { DashboardBudgetSegment } from "@/features/dashboard/types/dashboard.types";
-import { DASHBOARD_LOCALE } from "./formater";
-import { DashboardCard, DashboardCardTitle } from "./dashboard-card";
+import { DASHBOARD_LOCALE } from "@/helpers/chart-format.helper";
+import { DashboardCard, DashboardCardTitle } from "@/components/dashboard/dashboard-card";
 
 type BudgetUsageProps = {
   total: number;

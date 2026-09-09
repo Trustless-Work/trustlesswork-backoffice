@@ -30,8 +30,8 @@ export const DashboardPageHeader = ({
   return (
     <header className={cn("flex flex-col gap-4 pb-2", className)}>
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
-        <div className="flex min-w-0 flex-1 items-stretch gap-3 sm:gap-4">
-          <div className="flex aspect-square shrink-0 items-center justify-center self-stretch rounded-lg border bg-muted/10 min-h-12 sm:min-h-14">
+        <div className="flex min-w-0 flex-1 items-center gap-3 sm:gap-4">
+          <div className="flex size-12 shrink-0 items-center justify-center rounded-lg border bg-muted/10 sm:size-14">
             <Icon className="size-5 text-foreground sm:size-6" aria-hidden />
           </div>
 

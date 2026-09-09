@@ -4,14 +4,14 @@ import { curveMonotoneX } from "@visx/curve";
 import type { CSSProperties } from "react";
 import { useMemo } from "react";
 import type { DashboardVolumePoint } from "@/features/dashboard/types/dashboard.types";
-import { Area, AreaChart } from "@/features/dashboard/charts/area-chart";
-import { Grid } from "@/features/dashboard/charts/grid";
-import { ChartTooltip } from "@/features/dashboard/charts/tooltip";
-import { XAxis } from "@/features/dashboard/charts/x-axis";
-import { YAxis } from "@/features/dashboard/charts/y-axis";
-import { formatCompactCurrency } from "./formater";
-import { Delta, DeltaIcon, DeltaValue } from "./delta";
-import { DashboardCard, DashboardCardTitle } from "./dashboard-card";
+import { Area, AreaChart } from "@/components/charts/area-chart";
+import { Grid } from "@/components/charts/grid";
+import { ChartTooltip } from "@/components/charts/tooltip";
+import { XAxis } from "@/components/charts/x-axis";
+import { YAxis } from "@/components/charts/y-axis";
+import { formatCompactCurrency } from "@/helpers/chart-format.helper";
+import { Delta, DeltaIcon, DeltaValue } from "@/components/dashboard/delta";
+import { DashboardCard, DashboardCardTitle } from "@/components/dashboard/dashboard-card";
 
 const REVENUE_COLOR = "var(--chart-2)";
 

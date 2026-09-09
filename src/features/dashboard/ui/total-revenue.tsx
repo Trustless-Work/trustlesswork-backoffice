@@ -2,8 +2,8 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ArrowRight, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { formatFullCurrency, formatPercent } from "./formater";
-import { DashboardCard, DashboardCardTitle } from "./dashboard-card";
+import { formatFullCurrency, formatPercent } from "@/helpers/chart-format.helper";
+import { DashboardCard, DashboardCardTitle } from "@/components/dashboard/dashboard-card";
 
 const GAUGE_SEGMENTS = 52;
 

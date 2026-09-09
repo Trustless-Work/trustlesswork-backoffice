@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import {
   DashboardCard,
   DashboardCardSeparator,
-} from "@/features/dashboard/ui/dashboard-card";
+} from "@/components/dashboard/dashboard-card";
 
 const StatSkeleton = () => (
   <DashboardCard>

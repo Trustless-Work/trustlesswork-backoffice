@@ -1,5 +1,10 @@
 import { serverEnv } from "@/lib/env";
 import type { ProblemDetails } from "@/lib/api-error";
+import type { NetworkType } from "@/types/network.entity";
+
+export type AdminFetchInit = RequestInit & {
+  readonly network?: NetworkType;
+};
 
 export function createAdminCredentialMissingResponse(): Response {
   const body: ProblemDetails = {
@@ -13,22 +18,26 @@ export function createAdminCredentialMissingResponse(): Response {
 
 export async function adminFetch(
   path: string,
-  init?: RequestInit,
+  init?: AdminFetchInit,
 ): Promise<Response> {
   const apiKey = serverEnv.api.adminApiKey;
   if (!apiKey) {
     return createAdminCredentialMissingResponse();
   }
 
+  const { network, ...fetchInit } = init ?? {};
   const url = `${serverEnv.api.coreApiUrl}${path.startsWith("/") ? path : `/${path}`}`;
 
-  const headers = new Headers(init?.headers);
+  const headers = new Headers(fetchInit.headers);
   headers.set("Content-Type", "application/json");
   headers.set("Accept", "application/json");
   headers.set("x-api-key", apiKey);
+  if (network) {
+    headers.set("x-network", network);
+  }
 
   return fetch(url, {
-    ...init,
+    ...fetchInit,
     headers,
   });
 }

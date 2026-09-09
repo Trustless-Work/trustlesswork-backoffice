@@ -53,17 +53,38 @@ export const DASHBOARD_PAGES: Record<string, DashboardPageConfig> = {
   },
 };
 
-export function getDashboardPage(pathname: string): DashboardPageConfig | null {
-  const exactMatch = DASHBOARD_PAGES[pathname];
+export const ADMIN_PAGES: Record<string, DashboardPageConfig> = {
+  "/admin": {
+    title: "Analytics",
+    description:
+      "Platform growth, revenue by token, and escrow lifecycle insights.",
+    icon: LayoutDashboardIcon,
+  },
+};
+
+const SECTION_ROOTS = new Set(["/dashboard", "/admin"]);
+
+function matchPageConfig(
+  pathname: string,
+  pages: Record<string, DashboardPageConfig>,
+): DashboardPageConfig | null {
+  const exactMatch = pages[pathname];
   if (exactMatch) {
     return exactMatch;
   }
 
-  const nestedMatch = Object.entries(DASHBOARD_PAGES)
+  const nestedMatch = Object.entries(pages)
     .filter(
-      ([path]) => path !== "/dashboard" && pathname.startsWith(`${path}/`),
+      ([path]) => !SECTION_ROOTS.has(path) && pathname.startsWith(`${path}/`),
     )
     .sort(([pathA], [pathB]) => pathB.length - pathA.length)[0];
 
   return nestedMatch?.[1] ?? null;
+}
+
+export function getDashboardPage(pathname: string): DashboardPageConfig | null {
+  return (
+    matchPageConfig(pathname, DASHBOARD_PAGES) ??
+    matchPageConfig(pathname, ADMIN_PAGES)
+  );
 }

@@ -77,7 +77,15 @@ export async function clearClientAuthState(
 
   if (redirect && typeof window !== "undefined") {
     const currentPath = window.location.pathname;
-    if (!currentPath.startsWith("/login")) {
+
+    // `/admin` is a separate auth system (Supabase, `sb-*` cookies). Losing the
+    // wallet iron-session there is expected and must not bounce the operator to
+    // the wallet login page. The cleanup above still runs; only the redirect is
+    // suppressed.
+    const isWalletAuthArea =
+      !currentPath.startsWith("/login") && !currentPath.startsWith("/admin");
+
+    if (isWalletAuthArea) {
       window.location.assign(redirectTo);
     }
   }

@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { useDashboardMetrics } from "@/features/dashboard/hooks/useDashboardMetrics";
 import { DashboardStats } from "./stats";
-import { DashboardCardSeparator } from "./dashboard-card";
+import { DashboardCardSeparator } from "@/components/dashboard/dashboard-card";
 import { MorChart } from "./mor-chart";
 import { BudgetSentenceInsight } from "./budget-sentence-insight";
 import { BudgetUsage } from "./budget-usage";

@@ -96,6 +96,9 @@ jobs:
           SKIP_ENV_VALIDATION: "true"
           SESSION_SECRET: "ci-test-placeholder-secret-32chars-min"
           CORE_API_URL: "https://api.dev.trustlesswork.com"
+          NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co"
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "ci-test-placeholder-publishable-key"
+          ADMIN_ALLOWED_EMAIL_DOMAIN: "trustlesswork.com"
 
   build:
     name: Build (Next.js)
@@ -134,3 +137,6 @@ jobs:
           NEXT_TELEMETRY_DISABLED: "1"
           SESSION_SECRET: "ci-build-placeholder-secret-32chars-min"
           CORE_API_URL: "https://api.dev.trustlesswork.com"
+          NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co"
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "ci-build-placeholder-publishable-key"
+          ADMIN_ALLOWED_EMAIL_DOMAIN: "trustlesswork.com"

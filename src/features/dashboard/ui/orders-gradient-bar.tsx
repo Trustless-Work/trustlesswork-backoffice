@@ -1,6 +1,6 @@
 import type { ChartConfig } from "@/components/ui/chart";
 import { ordersChartConfig } from "@/features/dashboard/ui/orders-chart.data";
-import { formatDate } from "@/features/dashboard/ui/formater";
+import { formatDate } from "@/helpers/chart-format.helper";
 
 /** Horizontal overlap hides band-scale rounding + SVG antialiasing hairlines between neighbours. */
 const BAR_BLEED_X = 0.75;

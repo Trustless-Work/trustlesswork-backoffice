@@ -19,8 +19,8 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import type { DashboardAttentionItem } from "@/features/dashboard/types/dashboard.types";
-import { formatInteger } from "./formater";
-import { DashboardCard, DashboardCardTitle } from "./dashboard-card";
+import { formatInteger } from "@/helpers/chart-format.helper";
+import { DashboardCard, DashboardCardTitle } from "@/components/dashboard/dashboard-card";
 
 const ATTENTION_ICONS: Record<DashboardAttentionItem["icon"], ReactNode> = {
   dispute: <Scale aria-hidden="true" strokeWidth={2} />,

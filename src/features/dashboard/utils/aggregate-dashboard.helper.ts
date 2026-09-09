@@ -15,7 +15,7 @@ import {
   formatCompactCurrency,
   formatFullCurrency,
   formatInteger,
-} from "@/features/dashboard/ui/formater";
+} from "@/helpers/chart-format.helper";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const WINDOW_DAYS = 30;

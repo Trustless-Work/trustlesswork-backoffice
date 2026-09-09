@@ -3,14 +3,17 @@
 import { cn } from "@/lib/utils";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 import type { DashboardCreatedPoint } from "@/features/dashboard/types/dashboard.types";
-import { formatDate, formatInteger } from "./formater";
+import { formatDate, formatInteger } from "@/helpers/chart-format.helper";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Delta, DeltaIcon, DeltaValue } from "./delta";
-import { DashboardCard, DashboardCardSeparator } from "./dashboard-card";
+import { Delta, DeltaIcon, DeltaValue } from "@/components/dashboard/delta";
+import {
+  DashboardCard,
+  DashboardCardSeparator,
+} from "@/components/dashboard/dashboard-card";
 import { ordersChartConfig } from "@/features/dashboard/ui/orders-chart.data";
 import {
   OrdersGradientBar,
