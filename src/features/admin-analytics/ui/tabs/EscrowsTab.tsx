@@ -1,6 +1,12 @@
 "use client";
 
 import { useMemo } from "react";
+import {
+  FilterIcon,
+  GaugeIcon,
+  PercentIcon,
+  TrophyIcon,
+} from "lucide-react";
 import { Bar, BarChart, Cell, XAxis, YAxis } from "recharts";
 import {
   ChartContainer,
@@ -18,8 +24,10 @@ import { formatInteger } from "@/helpers/chart-format.helper";
 import type { AnalyticsRange } from "@/features/admin-analytics/constants/analytics-range";
 import type { EscrowsTopBy } from "@/features/admin-analytics/types/analytics-v2.types";
 import { useStatusFunnel } from "@/features/admin-analytics/hooks/useAdminAnalytics";
+import { AnalyticsSection } from "@/features/admin-analytics/ui/AnalyticsSection";
 import { DonutChart } from "@/features/admin-analytics/ui/charts/DonutChart";
 import { ConversionSection } from "@/features/admin-analytics/ui/escrows/ConversionSection";
+import { EscrowTypeMixSection } from "@/features/admin-analytics/ui/escrows/EscrowTypeMixSection";
 import { TopEscrowsBoard } from "@/features/admin-analytics/ui/escrows/TopEscrowsBoard";
 import {
   funnelLiveTotal,
@@ -111,71 +119,97 @@ export const EscrowsTab = ({ range, topBy }: EscrowsTabProps) => {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-8 md:gap-10">
       {query.errorMessage ? (
         <p className="text-pretty text-muted-foreground text-sm">
           {query.errorMessage}
         </p>
       ) : null}
 
-      <p className="text-muted-foreground text-xs">
-        Status funnel reflects escrows created in the selected range. Escrows
-        without a chain clock are excluded when date bounds apply.
-      </p>
-
-      <StatGrid columns={4} stats={stats} />
-
-      <div
-        className={cn(
-          "grid grid-cols-1 gap-4",
-          "lg:grid-cols-[.68fr_.32fr] xl:grid-cols-[.70fr_.30fr]",
-        )}
+      <AnalyticsSection
+        description="Snapshot of live escrow health in the selected range. Escrows without a chain clock are excluded when date bounds apply."
+        icon={GaugeIcon}
+        title="Overview"
       >
-        <DashboardCard className="gap-4">
-          <DashboardCardTitle>Status funnel</DashboardCardTitle>
-          <ChartContainer
-            className="aspect-16/5 w-full"
-            config={funnelChartConfig}
-          >
-            <BarChart accessibilityLayer data={[...rows]} layout="vertical">
-              <XAxis axisLine={false} tickLine={false} type="number" />
-              <YAxis
-                axisLine={false}
-                dataKey="label"
-                tickLine={false}
-                type="category"
-                width={80}
-              />
-              <ChartTooltip content={<ChartTooltipContent />} />
-              <Bar dataKey="count" radius={[0, 4, 4, 0]}>
-                {rows.map((row) => (
-                  <Cell key={row.key} fill={row.color} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ChartContainer>
-        </DashboardCard>
+        <StatGrid columns={4} stats={stats} />
+      </AnalyticsSection>
 
-        <div className="relative flex flex-col gap-4">
-          <DashboardCardSeparator
-            className="absolute inset-y-0 -left-2 hidden h-full w-px lg:block"
-            orientation="vertical"
-          />
-          <DashboardCardSeparator className="block lg:hidden" />
-
+      <AnalyticsSection
+        description="Where live escrows sit in the lifecycle funnel and how that mix distributes."
+        icon={FilterIcon}
+        title="Status funnel"
+      >
+        <div
+          className={cn(
+            "grid grid-cols-1 gap-4",
+            "lg:grid-cols-[.68fr_.32fr] xl:grid-cols-[.70fr_.30fr]",
+          )}
+        >
           <DashboardCard className="gap-4">
-            <DashboardCardTitle>Status distribution</DashboardCardTitle>
-            <DonutChart
-              emptyDescription="No live escrows to chart."
-              emptyTitle="Empty funnel"
-              slices={donutSlices}
-            />
+            <DashboardCardTitle>By status</DashboardCardTitle>
+            <ChartContainer
+              className="aspect-16/5 w-full"
+              config={funnelChartConfig}
+            >
+              <BarChart accessibilityLayer data={[...rows]} layout="vertical">
+                <XAxis axisLine={false} tickLine={false} type="number" />
+                <YAxis
+                  axisLine={false}
+                  dataKey="label"
+                  tickLine={false}
+                  type="category"
+                  width={80}
+                />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="count" radius={[0, 4, 4, 0]}>
+                  {rows.map((row) => (
+                    <Cell key={row.key} fill={row.color} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ChartContainer>
           </DashboardCard>
-        </div>
-      </div>
 
-      <ConversionSection range={range} />
-      <TopEscrowsBoard by={topBy} range={range} />
+          <div className="relative flex flex-col gap-4">
+            <DashboardCardSeparator
+              className="absolute inset-y-0 -left-2 hidden h-full w-px lg:block"
+              orientation="vertical"
+            />
+            <DashboardCardSeparator className="block lg:hidden" />
+
+            <DashboardCard className="gap-4">
+              <DashboardCardTitle>Distribution</DashboardCardTitle>
+              <DonutChart
+                emptyDescription="No live escrows to chart."
+                emptyTitle="Empty funnel"
+                slices={donutSlices}
+              />
+            </DashboardCard>
+          </div>
+        </div>
+      </AnalyticsSection>
+
+      <EscrowTypeMixSection range={range} topBy={topBy} />
+
+      <AnalyticsSection
+        description="Share of created cohorts that reach a release within the selected window."
+        icon={PercentIcon}
+        title="Conversion"
+      >
+        <ConversionSection range={range} />
+      </AnalyticsSection>
+
+      <AnalyticsSection
+        description={
+          topBy === "amount"
+            ? "Live escrows only, ranked by funded value."
+            : "Revenue population (includes removed escrows), ranked by fees earned."
+        }
+        icon={TrophyIcon}
+        title="Top escrows"
+      >
+        <TopEscrowsBoard by={topBy} range={range} />
+      </AnalyticsSection>
     </div>
   );
 };

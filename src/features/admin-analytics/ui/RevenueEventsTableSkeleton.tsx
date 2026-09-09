@@ -37,7 +37,7 @@ export const RevenueEventsTableSkeleton = () => (
       <Table>
         <TableHeader>
           <TableRow>
-            {Array.from({ length: 7 }).map((_, index) => (
+            {Array.from({ length: 8 }).map((_, index) => (
               <TableHead key={index}>
                 <Skeleton className="h-4 w-16" />
               </TableHead>
@@ -47,7 +47,7 @@ export const RevenueEventsTableSkeleton = () => (
         <TableBody>
           {Array.from({ length: 5 }).map((_, index) => (
             <TableRow key={index}>
-              {Array.from({ length: 7 }).map((__, cellIndex) => (
+              {Array.from({ length: 8 }).map((__, cellIndex) => (
                 <TableCell key={cellIndex}>
                   <Skeleton className="h-4 w-20" />
                 </TableCell>

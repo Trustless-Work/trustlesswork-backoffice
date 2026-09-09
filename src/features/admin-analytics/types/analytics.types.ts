@@ -1,5 +1,6 @@
 import type { z } from "zod/v3";
 import type {
+  analyticsEscrowTypeSchema,
   analyticsGranularitySchema,
   dataQualityResponseSchema,
   escrowGrowthResponseSchema,
@@ -18,6 +19,7 @@ import type {
 } from "@/features/admin-analytics/schemas/analytics.schema";
 
 export type AnalyticsGranularity = z.infer<typeof analyticsGranularitySchema>;
+export type AnalyticsEscrowType = z.infer<typeof analyticsEscrowTypeSchema>;
 export type SeriesGrowthPoint = z.infer<typeof seriesGrowthPointSchema>;
 /** @deprecated Use SeriesGrowthPoint */
 export type MonthlyGrowthPoint = SeriesGrowthPoint;

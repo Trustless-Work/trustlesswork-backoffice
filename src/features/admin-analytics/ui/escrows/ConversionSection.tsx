@@ -9,10 +9,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { StatGrid } from "@/components/dashboard/stat-grid";
-import {
-  DashboardCard,
-  DashboardCardTitle,
-} from "@/components/dashboard/dashboard-card";
+import { DashboardCard } from "@/components/dashboard/dashboard-card";
 import { formatInteger, formatPercent } from "@/helpers/chart-format.helper";
 import type { AnalyticsRange } from "@/features/admin-analytics/constants/analytics-range";
 import { useEscrowConversion } from "@/features/admin-analytics/hooks/useAdminAnalytics";
@@ -58,7 +55,6 @@ export const ConversionSection = ({ range }: ConversionSectionProps) => {
 
   return (
     <DashboardCard className="gap-4">
-      <DashboardCardTitle>Creation → release conversion</DashboardCardTitle>
       <StatGrid
         columns={3}
         stats={[

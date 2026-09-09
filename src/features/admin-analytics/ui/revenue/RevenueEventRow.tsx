@@ -19,6 +19,7 @@ import type {
   RevenueEventType,
 } from "@/features/admin-analytics/types/analytics.types";
 import { RevenueAssetAmount } from "@/features/admin-analytics/ui/RevenueAssetAmount";
+import { AnalyticsEscrowTypeBadge } from "@/features/admin-analytics/ui/escrows/AnalyticsEscrowTypeBadge";
 import {
   formatEventTypeLabel,
   formatOrganizationName,
@@ -83,7 +84,10 @@ export const RevenueEventCard = ({
           {formatIsoDateTime(event.createdAt)}
         </p>
       </div>
-      <RevenueEventTypeBadge eventType={event.eventType} />
+      <div className="flex shrink-0 flex-col items-end gap-1">
+        <AnalyticsEscrowTypeBadge type={event.type} />
+        <RevenueEventTypeBadge eventType={event.eventType} />
+      </div>
     </CardHeader>
     <CardContent className="grid grid-cols-2 gap-3">
       <div className="flex flex-col gap-1">
@@ -138,6 +142,9 @@ export const RevenueEventRow = ({
         href={getTrustlessWorkViewerUrl(network, event.escrowId)}
         label={truncateId(event.escrowId)}
       />
+    </TableCell>
+    <TableCell>
+      <AnalyticsEscrowTypeBadge type={event.type} />
     </TableCell>
     <TableCell>
       <RevenueEventTypeBadge eventType={event.eventType} />

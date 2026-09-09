@@ -52,7 +52,7 @@ export const AnalyticsRangeSelect = ({
         });
       }}
     >
-      <SelectTrigger className="w-[168px]" size="sm">
+      <SelectTrigger className="h-8 w-full rounded-lg sm:w-[168px]">
         <SelectValue placeholder="Select range" />
       </SelectTrigger>
       <SelectContent>

@@ -75,7 +75,8 @@ export const RevenueEventsTable = ({
             <TableRow>
               <TableHead>Timestamp</TableHead>
               <TableHead>Escrow</TableHead>
-              <TableHead>Type</TableHead>
+              <TableHead>Escrow type</TableHead>
+              <TableHead>Event</TableHead>
               <TableHead>Organization</TableHead>
               <TableHead className="text-right">Released</TableHead>
               <TableHead className="text-right">Fee</TableHead>

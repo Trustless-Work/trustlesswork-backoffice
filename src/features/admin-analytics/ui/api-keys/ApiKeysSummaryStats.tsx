@@ -64,13 +64,3 @@ export const ApiKeysSummaryStats = ({ summary }: ApiKeysSummaryStatsProps) => (
     />
   </>
 );
-
-export const UsageTrackedBanner = ({ since }: { since: string | null }) => (
-  <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm">
-    <p className="font-medium">Request usage tracking</p>
-    <p className="text-muted-foreground text-xs">
-      Per-key request counters exist from {since ?? "2026-09-08"} onward only.
-      Earlier usage was never recorded and cannot be backfilled.
-    </p>
-  </div>
-);

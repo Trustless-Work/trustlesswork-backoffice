@@ -268,6 +268,7 @@ describe("attributingEvents", () => {
   const baseEvent: RevenueEvent = {
     escrowId: "CBZXBSOQH3EWJHY5JE65QW6ZFJYLXKUAYNGG3PEGNSHHRFVVBLOF3FSQ",
     engagementId: null,
+    type: "single-release",
     eventType: "release",
     createdAt: "2026-06-09T23:33:46.000Z",
     txHash: null,

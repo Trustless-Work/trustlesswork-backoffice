@@ -26,14 +26,14 @@ export const AnalyticsFilterPopover = ({
   <Popover>
     <PopoverTrigger
       className={cn(
-        "inline-flex h-7 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-[min(var(--radius-md),10px)] border border-input bg-transparent px-2.5 text-sm outline-none transition-colors",
+        "inline-flex h-8 w-full cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors sm:w-auto sm:justify-start",
         "hover:border-ring focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
         "dark:bg-input/30 dark:hover:bg-input/50",
       )}
     >
       <SlidersHorizontalIcon
         aria-hidden="true"
-        className="size-3.5 text-muted-foreground"
+        className="size-4 text-muted-foreground"
       />
       Filters
       {activeCount > 0 ? (
@@ -43,7 +43,10 @@ export const AnalyticsFilterPopover = ({
       ) : null}
     </PopoverTrigger>
 
-    <PopoverContent align="end" className="w-72 gap-3">
+    <PopoverContent
+      align="end"
+      className="w-[min(18rem,calc(100vw-2rem))] gap-3"
+    >
       <div className="flex items-center justify-between gap-2">
         <PopoverTitle>Filters</PopoverTitle>
         <Button

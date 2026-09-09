@@ -451,7 +451,7 @@ Transparent Container when nesting custom panels:
 
 ```tsx
 // Icon tile
-"rounded-lg border bg-muted/10 min-h-12 sm:min-h-14"
+"size-12 rounded-lg border bg-muted/10 sm:size-14"
 // Icon: size-5 sm:size-6
 // Title: text-pretty text-2xl font-semibold tracking-tight md:text-3xl
 // Desc: max-w-2xl text-sm text-muted-foreground md:text-base

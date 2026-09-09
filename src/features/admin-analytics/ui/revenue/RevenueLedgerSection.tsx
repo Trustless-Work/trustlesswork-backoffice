@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  DashboardCard,
-  DashboardCardSeparator,
-  DashboardCardTitle,
-} from "@/components/dashboard/dashboard-card";
+import { DashboardCard } from "@/components/dashboard/dashboard-card";
 import { RevenueEventsTable } from "@/features/admin-analytics/ui/RevenueEventsTable";
 import type { RevenueEvent } from "@/features/admin-analytics/types/analytics.types";
 
@@ -29,28 +25,18 @@ export const RevenueLedgerSection = ({
   errorMessage,
   onPageChange,
 }: RevenueLedgerSectionProps) => (
-  <>
-    <DashboardCardSeparator />
-    <DashboardCard className="gap-4">
-      <DashboardCardTitle>Revenue ledger</DashboardCardTitle>
-      {errorMessage ? (
-        <p className="text-pretty text-muted-foreground text-sm">
-          {errorMessage}
-        </p>
-      ) : null}
-      <p className="text-muted-foreground text-xs">
-        Dimmed rows are audit history — only attributing rows count toward
-        revenue totals.
-      </p>
-      <RevenueEventsTable
-        escrowTotal={escrowTotal}
-        events={events}
-        isLoading={isLoading}
-        limit={limit}
-        offset={offset}
-        total={total}
-        onPageChange={onPageChange}
-      />
-    </DashboardCard>
-  </>
+  <DashboardCard className="gap-4">
+    {errorMessage ? (
+      <p className="text-pretty text-muted-foreground text-sm">{errorMessage}</p>
+    ) : null}
+    <RevenueEventsTable
+      escrowTotal={escrowTotal}
+      events={events}
+      isLoading={isLoading}
+      limit={limit}
+      offset={offset}
+      total={total}
+      onPageChange={onPageChange}
+    />
+  </DashboardCard>
 );

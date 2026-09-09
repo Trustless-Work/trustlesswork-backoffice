@@ -2,6 +2,12 @@ import { z } from "zod/v3";
 
 export const analyticsGranularitySchema = z.enum(["day", "week", "month"]);
 
+export const analyticsEscrowTypeSchema = z.enum([
+  "single-release",
+  "multi-release",
+]);
+
+
 export const seriesGrowthPointSchema = z.object({
   period: z.string().min(1),
   month: z.string().min(1),
@@ -69,7 +75,8 @@ export const revenueEventOrganizationSchema = z
   .object({
     id: z.string().min(1),
     name: z.string().min(1),
-    archived: z.boolean(),
+    /** Core may omit this on some analytics payloads (e.g. escrows/top). */
+    archived: z.boolean().default(false),
   })
   .nullable();
 
@@ -78,6 +85,7 @@ export const revenueEventTypeSchema = z.enum(["release", "resolve_dispute"]);
 export const revenueEventSchema = z.object({
   escrowId: z.string().min(1),
   engagementId: z.string().nullable(),
+  type: analyticsEscrowTypeSchema.nullish(),
   eventType: revenueEventTypeSchema,
   createdAt: z.string().min(1),
   txHash: z.string().nullable(),

@@ -1,5 +1,6 @@
 import { z } from "zod/v3";
 import {
+  analyticsEscrowTypeSchema,
   analyticsGranularitySchema,
   revenueAssetSchema,
   revenueEventOrganizationSchema,
@@ -8,6 +9,7 @@ import {
 export const topEscrowSchema = z.object({
   escrowId: z.string().min(1),
   engagementId: z.string().nullable(),
+  type: analyticsEscrowTypeSchema.nullish(),
   status: z.string().nullable(),
   organization: revenueEventOrganizationSchema,
   createdAt: z.string().nullable(),
@@ -23,6 +25,7 @@ export const topEscrowsByAssetSchema = z.object({
 
 export const escrowsTopResponseSchema = z.object({
   network: z.string(),
+  feeBps: z.number().optional(),
   by: z.enum(["amount", "fee"]),
   data: z.array(topEscrowsByAssetSchema),
 });
@@ -91,11 +94,6 @@ export const apiKeysSummaryResponseSchema = z.object({
   usageTrackedSince: z.string().nullable(),
 });
 
-export const apiKeyRefSchema = z.object({
-  id: z.string().min(1),
-  description: z.string().nullable(),
-});
-
 export const apiKeyTopByAssetSchema = z.object({
   asset: revenueAssetSchema,
   escrowCount: z.number(),
@@ -104,28 +102,21 @@ export const apiKeyTopByAssetSchema = z.object({
 });
 
 export const apiKeyTopItemSchema = z.object({
-  key: apiKeyRefSchema,
+  keyId: z.string().min(1),
+  description: z.string().nullable(),
+  active: z.boolean(),
   organization: revenueEventOrganizationSchema,
-  attribution: z.literal("platform").nullable(),
   escrowCount: z.number().optional(),
   byAsset: z.array(apiKeyTopByAssetSchema).optional(),
   requestCount: z.string().optional(),
 });
 
 export const apiKeysTopResponseSchema = z.object({
+  network: z.string().optional(),
+  feeBps: z.number().optional(),
   by: z.enum(["revenue", "volume", "escrows", "requests"]),
+  attribution: z.literal("platform").nullable().optional(),
   data: z.array(apiKeyTopItemSchema),
-});
-
-export const apiKeyDetailKeySchema = z.object({
-  id: z.string().min(1),
-  description: z.string().nullable(),
-  roles: z.array(z.string()),
-  active: z.boolean(),
-  createdAt: z.string().min(1),
-  expiresAt: z.string().nullable(),
-  lastUsedAt: z.string().nullable(),
-  lastUsedIp: z.string().nullable(),
 });
 
 export const apiKeyEscrowStatSchema = z.object({
@@ -141,7 +132,16 @@ export const apiKeyUsageDaySchema = z.object({
 });
 
 export const apiKeyDetailResponseSchema = z.object({
-  key: apiKeyDetailKeySchema,
+  network: z.string().optional(),
+  feeBps: z.number().optional(),
+  keyId: z.string().min(1),
+  description: z.string().nullable(),
+  roles: z.array(z.string()),
+  active: z.boolean(),
+  createdAt: z.string().min(1),
+  expiresAt: z.string().nullable(),
+  lastUsedAt: z.string().nullable(),
+  lastUsedIp: z.string().nullable(),
   organization: revenueEventOrganizationSchema,
   attribution: z.literal("platform").nullable(),
   escrowStats: z.array(apiKeyEscrowStatSchema),

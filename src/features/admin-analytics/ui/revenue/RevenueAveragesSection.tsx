@@ -29,10 +29,6 @@ export const RevenueAveragesSection = ({
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-muted-foreground text-xs">
-        Creation and revenue averages use different escrow populations — do not
-        divide fields across groups.
-      </p>
       {data.data.map((assetRow) => (
         <DashboardCard key={assetRow.asset.address} className="gap-4">
           <DashboardCardTitle>

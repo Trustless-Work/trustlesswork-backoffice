@@ -1,6 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import {
+  Building2Icon,
+  ChartPieIcon,
+  GaugeIcon,
+  ScrollTextIcon,
+  SigmaIcon,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ALL_ASSETS_VALUE } from "@/features/admin-analytics/constants/analytics-filters";
 import type { AnalyticsRange } from "@/features/admin-analytics/constants/analytics-range";
@@ -11,6 +18,7 @@ import {
   useVolumeVsFees,
 } from "@/features/admin-analytics/hooks/useAdminAnalytics";
 import { resolveResponseGranularity } from "@/features/admin-analytics/utils/analytics-range.util";
+import { AnalyticsSection } from "@/features/admin-analytics/ui/AnalyticsSection";
 import { RevenueChartsSection } from "@/features/admin-analytics/ui/revenue/RevenueChartsSection";
 import { RevenueAveragesSection } from "@/features/admin-analytics/ui/revenue/RevenueAveragesSection";
 import { TopOrganizationsCard } from "@/features/admin-analytics/ui/revenue/TopOrganizationsCard";
@@ -134,7 +142,7 @@ export const RevenueTab = ({ range, filters }: RevenueTabProps) => {
   const isAllAssets = assetFilter === ALL_ASSETS_VALUE;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-8 md:gap-10">
       {query.errorMessage ? (
         <p className="text-pretty text-muted-foreground text-sm">
           {query.errorMessage}
@@ -145,53 +153,83 @@ export const RevenueTab = ({ range, filters }: RevenueTabProps) => {
         <Badge variant="outline">* unresolved token decimals</Badge>
       ) : null}
 
-      <RevenueStatsGrid
-        buckets={buckets}
-        eventType={eventType}
-        eventsPending={eventsQuery.isPending}
-        eventsTotal={eventsQuery.data?.pagination.total ?? 0}
-        feeBps={query.data?.feeBps}
-      />
-
-      <RevenueChartsSection
-        categoryLineSeries={categoryLineSeries}
-        categorySlices={categorySlices}
-        chartConfig={chartConfig}
-        chartSeries={chartSeries}
-        granularity={granularity}
-        tokenKeys={tokenKeys}
-        tokenSlices={tokenSlices}
-      />
-
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <TopOrganizationsCard
-          isAllAssets={isAllAssets}
-          organizations={eventsQuery.data?.topOrganizations ?? []}
-          selectedAssetAddress={isAllAssets ? null : assetFilter}
+      <AnalyticsSection
+        description="Platform fee totals and event volume for the selected range and asset filter."
+        icon={GaugeIcon}
+        title="Overview"
+      >
+        <RevenueStatsGrid
+          buckets={buckets}
+          eventType={eventType}
+          eventsPending={eventsQuery.isPending}
+          eventsTotal={eventsQuery.data?.pagination.total ?? 0}
+          feeBps={query.data?.feeBps}
         />
-        {volumeQuery.data && volumeAssetKey ? (
-          <VolumeVsFeesChart
-            assetKey={volumeAssetKey}
-            data={volumeQuery.data}
-            granularity={granularity}
+      </AnalyticsSection>
+
+      <AnalyticsSection
+        description="How fees break down by release path, category, and token over time."
+        icon={ChartPieIcon}
+        title="Fee mix"
+      >
+        <RevenueChartsSection
+          categoryLineSeries={categoryLineSeries}
+          categorySlices={categorySlices}
+          chartConfig={chartConfig}
+          chartSeries={chartSeries}
+          granularity={granularity}
+          tokenKeys={tokenKeys}
+          tokenSlices={tokenSlices}
+        />
+      </AnalyticsSection>
+
+      <AnalyticsSection
+        description="Organizations driving the most revenue, alongside volume versus platform take."
+        icon={Building2Icon}
+        title="Leaders"
+      >
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <TopOrganizationsCard
+            isAllAssets={isAllAssets}
+            organizations={eventsQuery.data?.topOrganizations ?? []}
+            selectedAssetAddress={isAllAssets ? null : assetFilter}
           />
-        ) : null}
-      </div>
+          {volumeQuery.data && volumeAssetKey ? (
+            <VolumeVsFeesChart
+              assetKey={volumeAssetKey}
+              data={volumeQuery.data}
+              granularity={granularity}
+            />
+          ) : null}
+        </div>
+      </AnalyticsSection>
 
       {averagesQuery.data ? (
-        <RevenueAveragesSection data={averagesQuery.data} />
+        <AnalyticsSection
+          description="Creation and revenue averages use different escrow populations — do not divide fields across groups."
+          icon={SigmaIcon}
+          title="Averages"
+        >
+          <RevenueAveragesSection data={averagesQuery.data} />
+        </AnalyticsSection>
       ) : null}
 
-      <RevenueLedgerSection
-        escrowTotal={eventsQuery.data?.escrowTotal ?? 0}
-        errorMessage={eventsQuery.errorMessage}
-        events={eventsQuery.data?.data ?? []}
-        isLoading={eventsQuery.isPending}
-        limit={EVENTS_PAGE_SIZE}
-        offset={eventsOffset}
-        total={eventsQuery.data?.pagination.total ?? 0}
-        onPageChange={setEventsOffset}
-      />
+      <AnalyticsSection
+        description="Dimmed rows are audit history — only attributing rows count toward revenue totals."
+        icon={ScrollTextIcon}
+        title="Revenue ledger"
+      >
+        <RevenueLedgerSection
+          escrowTotal={eventsQuery.data?.escrowTotal ?? 0}
+          errorMessage={eventsQuery.errorMessage}
+          events={eventsQuery.data?.data ?? []}
+          isLoading={eventsQuery.isPending}
+          limit={EVENTS_PAGE_SIZE}
+          offset={eventsOffset}
+          total={eventsQuery.data?.pagination.total ?? 0}
+          onPageChange={setEventsOffset}
+        />
+      </AnalyticsSection>
     </div>
   );
 };

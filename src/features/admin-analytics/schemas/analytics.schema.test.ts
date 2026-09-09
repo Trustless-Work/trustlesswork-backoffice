@@ -3,11 +3,25 @@ import {
   dataQualityResponseSchema,
   escrowGrowthResponseSchema,
   revenueByTokenResponseSchema,
+  revenueEventOrganizationSchema,
   revenueEventsResponseSchema,
   seriesGrowthPointSchema,
   statusFunnelResponseSchema,
   userGrowthResponseSchema,
 } from "@/features/admin-analytics/schemas/analytics.schema";
+
+describe("revenueEventOrganizationSchema", () => {
+  it("defaults archived when core omits the field", () => {
+    const result = revenueEventOrganizationSchema.safeParse({
+      id: "20",
+      name: "Youyou",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data?.archived).toBe(false);
+    }
+  });
+});
 
 describe("seriesGrowthPointSchema", () => {
   it("accepts null growthPct and period alias", () => {
@@ -92,6 +106,7 @@ describe("revenueEventsResponseSchema", () => {
         {
           escrowId: "CBZXBSOQH3EWJHY5JE65QW6ZFJYLXKUAYNGG3PEGNSHHRFVVBLOF3FSQ",
           engagementId: "ENG-2026-041",
+          type: "single-release",
           eventType: "release",
           createdAt: "2026-06-09T23:33:46.000Z",
           txHash: "44a4a684cd8dbec745ca1d29855edd2f7eada7ff07e06b831c31102268b6a633",

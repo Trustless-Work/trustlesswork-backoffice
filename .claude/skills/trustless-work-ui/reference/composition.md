@@ -31,7 +31,7 @@ Feature section gaps under header: usually `gap-4` or `gap-6`.
 "flex flex-col gap-4 pb-2"
 
 // Icon tile
-"… rounded-lg border bg-muted/10 min-h-12 sm:min-h-14"
+"size-12 … rounded-lg border bg-muted/10 sm:size-14"
 // Icon
 "size-5 sm:size-6"
 
