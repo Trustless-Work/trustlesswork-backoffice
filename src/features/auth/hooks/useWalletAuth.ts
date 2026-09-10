@@ -14,6 +14,7 @@ import { authService } from "@/features/auth/services/auth.service";
 import type { RegisterProfileInput } from "@/features/auth/types/auth.types";
 import { isRegisteredSessionChallenge } from "@/features/auth/types/auth.types";
 import { clearClientAuthState } from "@/features/auth/lib/logout-client";
+import { markOnboardingPending } from "@/features/onboarding/lib/onboarding-storage";
 import { parseApiError } from "@/lib/api-error";
 
 export type WalletAuthPhase =
@@ -188,6 +189,7 @@ export function useWalletAuth() {
         );
 
         setPhase("idle");
+        markOnboardingPending();
         router.push(redirectPath);
       } catch (error) {
         if (isWalletModalDismissed(error)) {

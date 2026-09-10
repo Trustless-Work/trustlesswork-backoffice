@@ -83,5 +83,5 @@ export const RevenueStatsGrid = ({
     return null;
   }
 
-  return <StatGrid columns={3} stats={stats} />;
+  return <StatGrid columns={2} stats={stats} />;
 };

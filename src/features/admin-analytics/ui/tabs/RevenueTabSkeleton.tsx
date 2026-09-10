@@ -34,7 +34,7 @@ const StatCardSkeleton = ({
       orientation="horizontal"
     />
     <DashboardCardSeparator
-      className="absolute right-0 hidden h-full group-last:hidden lg:block lg:group-[:nth-child(3n)]:hidden"
+      className="absolute right-0 hidden h-full group-last:hidden lg:block lg:group-[:nth-child(2n)]:hidden"
       orientation="vertical"
     />
 
@@ -59,13 +59,44 @@ const StatCardSkeleton = ({
 
 export const RevenueTabSkeleton = () => (
   <div className="flex flex-col gap-8 md:gap-10">
-    <AnalyticsSectionSkeleton>
-      <div className="grid grid-cols-1 lg:grid-cols-3">
-        {STAT_CARD_SKELETONS.map((stat, index) => (
-          <StatCardSkeleton key={index} {...stat} />
-        ))}
-      </div>
-    </AnalyticsSectionSkeleton>
+    <div className="grid grid-cols-1 gap-8 lg:grid-cols-[.6fr_.4fr] lg:gap-6 xl:gap-8">
+      <AnalyticsSectionSkeleton>
+        <div className="grid grid-cols-1 lg:grid-cols-2">
+          {STAT_CARD_SKELETONS.map((stat, index) => (
+            <StatCardSkeleton key={index} {...stat} />
+          ))}
+        </div>
+      </AnalyticsSectionSkeleton>
+
+      <AnalyticsSectionSkeleton descriptionWidth="w-40" titleWidth="w-20">
+        <DashboardCard className="gap-4">
+          <div className="flex items-center justify-between gap-2">
+            <Skeleton className="h-3 w-28" />
+            <Skeleton className="h-5 w-24 rounded-4xl" />
+          </div>
+          <ul className="flex flex-col gap-1">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <li
+                key={index}
+                className="flex items-start gap-2.5 rounded-xl px-2 py-2.5"
+              >
+                <Skeleton className="size-6 shrink-0 rounded-full" />
+                <div className="min-w-0 flex-1 space-y-1.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="space-y-1">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-3 w-14" />
+                    </div>
+                    <Skeleton className="h-4 w-12" />
+                  </div>
+                  <Skeleton className="h-1.5 w-full rounded-full" />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </DashboardCard>
+      </AnalyticsSectionSkeleton>
+    </div>
 
     <AnalyticsSectionSkeleton descriptionWidth="w-80" titleWidth="w-24">
       <div
@@ -106,6 +137,13 @@ export const RevenueTabSkeleton = () => (
           </DashboardCard>
         </div>
       </div>
+    </AnalyticsSectionSkeleton>
+
+    <AnalyticsSectionSkeleton descriptionWidth="w-72" titleWidth="w-32">
+      <DashboardCard className="gap-4">
+        <Skeleton className="h-3 w-40" />
+        <ChartRegionSkeleton className="aspect-16/5 w-full" />
+      </DashboardCard>
     </AnalyticsSectionSkeleton>
 
     <AnalyticsSectionSkeleton descriptionWidth="w-96" titleWidth="w-36">

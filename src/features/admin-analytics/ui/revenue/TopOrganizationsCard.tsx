@@ -17,6 +17,7 @@ import {
 } from "@/features/admin-analytics/utils/top-organizations.util";
 import { formatOrganizationName } from "@/features/admin-analytics/utils/revenue.util";
 import Decimal from "decimal.js";
+import { cn } from "@/lib/utils";
 
 type TopOrganizationsCardProps = {
   organizations: readonly TopOrganization[];
@@ -60,7 +61,7 @@ export const TopOrganizationsCard = ({
           <Badge variant="outline">Ranked by fee</Badge>
         )}
       </div>
-      <ul className="flex flex-col gap-3">
+      <ul className="flex flex-col gap-1">
         {ranked.map((org, index) => {
           const breakdown = assetBreakdownForOrganization(
             org,
@@ -75,34 +76,49 @@ export const TopOrganizationsCard = ({
               : 0;
 
           return (
-            <li key={org.organization?.id ?? `unattributed-${index}`}>
-              <div className="mb-1 flex items-center justify-between gap-2">
-                <div className="flex min-w-0 items-center gap-2">
-                  <span className="text-muted-foreground text-xs tabular-nums">
-                    {index + 1}.
-                  </span>
-                  <span className="truncate text-sm font-medium">
-                    {formatOrganizationName(org.organization)}
-                  </span>
-                  {org.organization?.archived ? (
-                    <Badge variant="secondary">Archived</Badge>
-                  ) : null}
-                </div>
-                <span className="text-muted-foreground text-xs tabular-nums">
-                  {org.escrowCount} escrows
+            <li
+              key={org.organization?.id ?? `unattributed-${index}`}
+              className="rounded-xl px-2 py-2.5 hover:bg-muted/40"
+            >
+              <div className="flex items-start gap-2.5">
+                <span
+                  className={cn(
+                    "flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-medium tabular-nums",
+                    index === 0
+                      ? "bg-primary/10 text-primary"
+                      : "bg-muted text-muted-foreground",
+                  )}
+                >
+                  {index + 1}
                 </span>
-              </div>
-              <Progress className="h-1.5" value={progress} />
-              {breakdown && selectedAssetAddress ? (
-                <div className="mt-1 flex justify-end">
-                  <RevenueAssetAmount
-                    align="right"
-                    amount={breakdown.feeAmount}
-                    asset={breakdown.asset}
-                    size="sm"
-                  />
+                <div className="min-w-0 flex-1 space-y-1.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 space-y-0.5">
+                      <div className="flex min-w-0 items-center gap-1.5">
+                        <span className="truncate text-sm font-medium">
+                          {formatOrganizationName(org.organization)}
+                        </span>
+                        {org.organization?.archived ? (
+                          <Badge variant="secondary">Archived</Badge>
+                        ) : null}
+                      </div>
+                      <p className="text-muted-foreground text-xs tabular-nums">
+                        {org.escrowCount}{" "}
+                        {org.escrowCount === 1 ? "escrow" : "escrows"}
+                      </p>
+                    </div>
+                    {breakdown && selectedAssetAddress ? (
+                      <RevenueAssetAmount
+                        align="right"
+                        amount={breakdown.feeAmount}
+                        asset={breakdown.asset}
+                        size="sm"
+                      />
+                    ) : null}
+                  </div>
+                  <Progress className="h-1.5" value={progress} />
                 </div>
-              ) : null}
+              </div>
             </li>
           );
         })}

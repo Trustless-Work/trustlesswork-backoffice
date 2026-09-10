@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   Building2Icon,
+  ChartColumnIcon,
   ChartPieIcon,
   GaugeIcon,
   ScrollTextIcon,
@@ -96,7 +97,9 @@ export const RevenueTab = ({ range, filters }: RevenueTabProps) => {
   );
 
   const tokenKeys = useMemo(
-    () => [...new Set(buckets.map((bucket) => resolveAssetSymbol(bucket.asset)))],
+    () => [
+      ...new Set(buckets.map((bucket) => resolveAssetSymbol(bucket.asset))),
+    ],
     [buckets],
   );
 
@@ -153,19 +156,33 @@ export const RevenueTab = ({ range, filters }: RevenueTabProps) => {
         <Badge variant="outline">* unresolved token decimals</Badge>
       ) : null}
 
-      <AnalyticsSection
-        description="Platform fee totals and event volume for the selected range and asset filter."
-        icon={GaugeIcon}
-        title="Overview"
-      >
-        <RevenueStatsGrid
-          buckets={buckets}
-          eventType={eventType}
-          eventsPending={eventsQuery.isPending}
-          eventsTotal={eventsQuery.data?.pagination.total ?? 0}
-          feeBps={query.data?.feeBps}
-        />
-      </AnalyticsSection>
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[.6fr_.4fr] lg:gap-6 xl:gap-8">
+        <AnalyticsSection
+          description="Platform fee totals and event volume for the selected range and asset filter."
+          icon={GaugeIcon}
+          title="Overview"
+        >
+          <RevenueStatsGrid
+            buckets={buckets}
+            eventType={eventType}
+            eventsPending={eventsQuery.isPending}
+            eventsTotal={eventsQuery.data?.pagination.total ?? 0}
+            feeBps={query.data?.feeBps}
+          />
+        </AnalyticsSection>
+
+        <AnalyticsSection
+          description="Organizations driving the most revenue."
+          icon={Building2Icon}
+          title="Leaders"
+        >
+          <TopOrganizationsCard
+            isAllAssets={isAllAssets}
+            organizations={eventsQuery.data?.topOrganizations ?? []}
+            selectedAssetAddress={isAllAssets ? null : assetFilter}
+          />
+        </AnalyticsSection>
+      </div>
 
       <AnalyticsSection
         description="How fees break down by release path, category, and token over time."
@@ -183,26 +200,19 @@ export const RevenueTab = ({ range, filters }: RevenueTabProps) => {
         />
       </AnalyticsSection>
 
-      <AnalyticsSection
-        description="Organizations driving the most revenue, alongside volume versus platform take."
-        icon={Building2Icon}
-        title="Leaders"
-      >
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <TopOrganizationsCard
-            isAllAssets={isAllAssets}
-            organizations={eventsQuery.data?.topOrganizations ?? []}
-            selectedAssetAddress={isAllAssets ? null : assetFilter}
+      {volumeQuery.data && volumeAssetKey ? (
+        <AnalyticsSection
+          description="Created and released volume versus platform take over time."
+          icon={ChartColumnIcon}
+          title="Volume vs fees"
+        >
+          <VolumeVsFeesChart
+            assetKey={volumeAssetKey}
+            data={volumeQuery.data}
+            granularity={granularity}
           />
-          {volumeQuery.data && volumeAssetKey ? (
-            <VolumeVsFeesChart
-              assetKey={volumeAssetKey}
-              data={volumeQuery.data}
-              granularity={granularity}
-            />
-          ) : null}
-        </div>
-      </AnalyticsSection>
+        </AnalyticsSection>
+      ) : null}
 
       {averagesQuery.data ? (
         <AnalyticsSection
