@@ -153,6 +153,12 @@ export function getEscrowRoleEntries(escrow: StoredEscrow): EscrowRoleEntry[] {
     });
   }
 
+  entries.push({
+    id: "observers",
+    label: ESCROW_ROLE_LABELS.observers,
+    addresses: escrow.roles.observers ?? [],
+  });
+
   return entries;
 }
 

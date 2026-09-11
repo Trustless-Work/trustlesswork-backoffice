@@ -33,6 +33,7 @@ type EscrowRoleAddressListProps<TForm extends FieldValues> = {
   label: string;
   description: string;
   disabled?: boolean;
+  minCount?: number;
 };
 
 export const EscrowRoleAddressList = <TForm extends FieldValues>({
@@ -41,6 +42,7 @@ export const EscrowRoleAddressList = <TForm extends FieldValues>({
   label,
   description,
   disabled = false,
+  minCount = 1,
 }: EscrowRoleAddressListProps<TForm>) => {
   const watchedAddresses = useWatch({ control: form.control, name });
   const addresses: string[] = Array.isArray(watchedAddresses)
@@ -61,7 +63,7 @@ export const EscrowRoleAddressList = <TForm extends FieldValues>({
     }
 
     const lastAddress = addresses[addresses.length - 1];
-    if (!isAddressFilled(lastAddress)) {
+    if (addresses.length > 0 && !isAddressFilled(lastAddress)) {
       return;
     }
 
@@ -69,7 +71,7 @@ export const EscrowRoleAddressList = <TForm extends FieldValues>({
   };
 
   const removeAddress = (index: number): void => {
-    if (addresses.length <= 1) {
+    if (addresses.length <= minCount) {
       return;
     }
 
@@ -78,7 +80,8 @@ export const EscrowRoleAddressList = <TForm extends FieldValues>({
 
   const lastAddress = addresses[addresses.length - 1];
   const canAppend =
-    addresses.length < MAX_ROLE_ADDRESS_COUNT && isAddressFilled(lastAddress);
+    addresses.length < MAX_ROLE_ADDRESS_COUNT &&
+    (addresses.length === 0 || isAddressFilled(lastAddress));
 
   return (
     <div className="rounded-xl border border-border p-3 md:p-4">
@@ -88,6 +91,11 @@ export const EscrowRoleAddressList = <TForm extends FieldValues>({
       </div>
 
       <div className="flex flex-col gap-2">
+        {addresses.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            No addresses added yet.
+          </p>
+        ) : null}
         {addresses.map((_, index) => (
           <div key={`${name}-${index}`} className="flex items-start gap-2">
             <FormField
@@ -110,7 +118,7 @@ export const EscrowRoleAddressList = <TForm extends FieldValues>({
               )}
             />
 
-            {addresses.length > 1 ? (
+            {addresses.length > minCount ? (
               <Button
                 type="button"
                 variant="ghost"

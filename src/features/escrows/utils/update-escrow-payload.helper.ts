@@ -57,6 +57,7 @@ function buildBaseRolesDefaults(escrow: StoredEscrow) {
     releaseSigners: [...escrow.roles.releaseSigners],
     disputeResolvers: [...escrow.roles.disputeResolvers],
     admin: escrow.roles.admin,
+    observers: [...(escrow.roles.observers ?? [])],
   };
 }
 
@@ -114,6 +115,7 @@ function buildSingleReleasePayload(
     disputeResolvers: values.roles.disputeResolvers,
     receiver: values.roles.receiver,
     admin: escrow.roles.admin,
+    observers: values.roles.observers,
   };
 
   return {
@@ -147,6 +149,7 @@ function buildMultiReleasePayload(
     releaseSigners: values.roles.releaseSigners,
     disputeResolvers: values.roles.disputeResolvers,
     admin: escrow.roles.admin,
+    observers: values.roles.observers,
   };
 
   return {
@@ -174,10 +177,7 @@ export function buildUpdateEscrowPayload(
   escrow: StoredEscrow,
   values: UpdateEscrowFormData,
 ): UpdateSingleReleaseEscrowPayload | UpdateMultiReleaseEscrowPayload {
-  if (
-    isStoredSingleReleaseEscrow(escrow) &&
-    values.type === "single-release"
-  ) {
+  if (isStoredSingleReleaseEscrow(escrow) && values.type === "single-release") {
     return buildSingleReleasePayload(escrow, values);
   }
 

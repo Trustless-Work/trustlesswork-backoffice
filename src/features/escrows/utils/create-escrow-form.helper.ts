@@ -2,6 +2,7 @@ import { trustlineOptions } from "@/components/tw-blocks/wallet-kit/trustlines";
 import type {
   CreateEscrowFormData,
   CreateEscrowMilestoneFormData,
+  SingleReleaseCreateFormData,
 } from "@/features/escrows/schemas/create-escrow.schema";
 import type { EscrowType } from "@/features/escrows/types/escrow.types";
 
@@ -13,7 +14,9 @@ export const TEMPLATE_DISPUTE_RESOLVER =
 export const TEMPLATE_ADMIN =
   "GCK27OWIRLRVHGFOOO67SF5NL2LD5WIQSFAT5MMFEF7AGUOREUL7SBSX";
 
-export function buildDefaultRoles(walletAddress: string) {
+export function buildDefaultRoles(
+  walletAddress: string,
+): SingleReleaseCreateFormData["roles"] {
   const address = walletAddress || "";
 
   return {
@@ -24,6 +27,7 @@ export function buildDefaultRoles(walletAddress: string) {
     disputeResolvers: [address],
     receiver: address,
     admin: address,
+    observers: [],
   };
 }
 
@@ -52,6 +56,7 @@ export function getDefaultValues(
         releaseSigners: roles.releaseSigners,
         disputeResolvers: roles.disputeResolvers,
         admin: roles.admin,
+        observers: roles.observers,
       },
       milestones: [
         {
@@ -108,6 +113,7 @@ export function buildTemplateValues(
         releaseSigners: roles.releaseSigners,
         disputeResolvers: roles.disputeResolvers,
         admin: roles.admin,
+        observers: roles.observers,
       },
       milestones: [
         {
@@ -173,6 +179,7 @@ export function migrateFormValues(
     releaseSigners: current.roles.releaseSigners,
     disputeResolvers: current.roles.disputeResolvers,
     admin: current.roles.admin,
+    observers: current.roles.observers ?? [],
   };
 
   if (nextType === "multi-release") {

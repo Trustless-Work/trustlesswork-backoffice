@@ -142,6 +142,7 @@ describe("updateEscrowSchema", () => {
     disputeResolvers: [RESOLVER_ADDRESS],
     admin: ADMIN_ADDRESS,
     receiver: VALID_ADDRESS,
+    observers: [],
   };
 
   it("accepts a valid single-release update payload", () => {
@@ -185,9 +186,7 @@ describe("updateEscrowSchema", () => {
     }
 
     expect(result.error.issues).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ path: ["title"] }),
-      ]),
+      expect.arrayContaining([expect.objectContaining({ path: ["title"] })]),
     );
   });
 
@@ -205,6 +204,7 @@ describe("updateEscrowSchema", () => {
         releaseSigners: [VALID_ADDRESS],
         disputeResolvers: [RESOLVER_ADDRESS],
         admin: ADMIN_ADDRESS,
+        observers: [`G${"E".repeat(55)}`],
       },
       trustline: {
         isCustom: true,
@@ -214,5 +214,10 @@ describe("updateEscrowSchema", () => {
     });
 
     expect(result.success).toBe(true);
+    if (!result.success) {
+      return;
+    }
+
+    expect(result.data.roles.observers).toEqual([`G${"E".repeat(55)}`]);
   });
 });

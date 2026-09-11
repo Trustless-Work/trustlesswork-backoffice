@@ -37,6 +37,7 @@ function createSingleEscrow(): StoredSingleReleaseEscrow {
       disputeResolvers: ["GDISPUTE"],
       platform: PLATFORM,
       receiver: RECEIVER,
+      observers: ["GOBSERVER"],
     },
     milestones: [
       { description: "Milestone 1", status: "pending", approvalsTarget: 1 },
@@ -94,6 +95,7 @@ describe("buildUpdateEscrowDefaultValues", () => {
 
     expect(defaults.amount).toBe(100);
     expect(defaults.roles.receiver).toBe(RECEIVER);
+    expect(defaults.roles.observers).toEqual(["GOBSERVER"]);
     expect(defaults.trustline.address).toBe("CUSDC");
     expect(defaults.trustline.isCustom).toBe(true);
   });
@@ -141,6 +143,7 @@ describe("buildUpdateEscrowPayload", () => {
         disputeResolvers: ["GDISPUTE"],
         admin: "GTAMPERED",
         receiver: "GNEWRECEIVER",
+        observers: ["GNEWOBSERVER"],
       },
       trustline: { isCustom: true, address: "CNEWSAC", symbol: "EURC" },
     });
@@ -149,6 +152,7 @@ describe("buildUpdateEscrowPayload", () => {
     expect(payload.admin).toBe(ADMIN);
     expect(payload.escrow.roles.admin).toBe(ADMIN);
     expect(payload.escrow.roles.platform).toBe(PLATFORM);
+    expect(payload.escrow.roles.observers).toEqual(["GNEWOBSERVER"]);
     expect(payload.escrow.title).toBe("New title");
     expect(payload.escrow.trustline.contractId).toBe("CNEWSAC");
     expect(payload.escrow.milestones).toHaveLength(1);
@@ -170,6 +174,7 @@ describe("buildUpdateEscrowPayload", () => {
         releaseSigners: ["GRELEASE"],
         disputeResolvers: ["GDISPUTE"],
         admin: "GTAMPERED",
+        observers: [],
       },
       trustline: { isCustom: true, address: "CNEWSAC", symbol: "EURC" },
     });
@@ -178,6 +183,7 @@ describe("buildUpdateEscrowPayload", () => {
     expect("amount" in props).toBe(false);
     expect(props.roles.admin).toBe(ADMIN);
     expect(props.roles.platform).toBe(PLATFORM);
+    expect(props.roles.observers).toEqual([]);
 
     if ("amount" in props) {
       throw new Error("Expected a multi-release update payload");

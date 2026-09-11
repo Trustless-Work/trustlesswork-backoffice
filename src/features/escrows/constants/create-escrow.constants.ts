@@ -6,7 +6,8 @@ export type MultiRoleFieldName =
   | "roles.approvers"
   | "roles.serviceProviders"
   | "roles.releaseSigners"
-  | "roles.disputeResolvers";
+  | "roles.disputeResolvers"
+  | "roles.observers";
 
 export type CreateEscrowFieldPath = FieldPath<CreateEscrowFormData>;
 
@@ -38,7 +39,8 @@ export type RoleFieldKey =
   | "releaseSigners"
   | "disputeResolvers"
   | "admin"
-  | "receiver";
+  | "receiver"
+  | "observers";
 
 export type RoleFieldConfig = {
   key: RoleFieldKey;
@@ -46,6 +48,7 @@ export type RoleFieldConfig = {
   description: string;
   multiple: boolean;
   singleReleaseOnly?: boolean;
+  minCount?: number;
 };
 
 export const CREATE_ESCROW_ROLE_FIELDS: RoleFieldConfig[] = [
@@ -92,6 +95,14 @@ export const CREATE_ESCROW_ROLE_FIELDS: RoleFieldConfig[] = [
     description: "Single beneficiary for the full release.",
     multiple: false,
     singleReleaseOnly: true,
+  },
+  {
+    key: "observers",
+    label: "Observers",
+    description:
+      "Optional. Up to 5 read-only wallets with no signing authority.",
+    multiple: true,
+    minCount: 0,
   },
 ];
 

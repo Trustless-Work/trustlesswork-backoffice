@@ -19,6 +19,7 @@ export function toDeployPayload(
     releaseSigners: values.roles.releaseSigners,
     disputeResolvers: values.roles.disputeResolvers,
     admin: values.roles.admin,
+    observers: values.roles.observers,
   };
 
   const trustline = {

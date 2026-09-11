@@ -3,7 +3,6 @@
 import type { Path, UseFormReturn } from "react-hook-form";
 import {
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -14,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { CREATE_ESCROW_PLACEHOLDERS } from "@/features/escrows/constants/create-escrow.constants";
 import type { CreateEscrowFormData } from "@/features/escrows/schemas/create-escrow.schema";
 import type { UpdateEscrowFormData } from "@/features/escrows/schemas/escrow-action.schemas";
-import { EscrowRoleAddressList } from "@/features/escrows/ui/EscrowRoleAddressList";
+import { UpdateEscrowRolesFields } from "@/features/escrows/ui/actions/UpdateEscrowRolesFields";
 import {
   EscrowTrustlineAddressField,
   EscrowTrustlineCustomSwitch,
@@ -26,29 +25,6 @@ type UpdateEscrowFormProps = {
   form: UseFormReturn<UpdateEscrowFormData>;
   isMulti: boolean;
 };
-
-const ROLE_ARRAY_FIELDS = [
-  {
-    key: "roles.approvers",
-    label: "Approvers",
-    description: "1-5 distinct addresses that approve milestones.",
-  },
-  {
-    key: "roles.serviceProviders",
-    label: "Service Providers",
-    description: "1-5 distinct addresses that update milestone status.",
-  },
-  {
-    key: "roles.releaseSigners",
-    label: "Release Signers",
-    description: "1-5 distinct addresses authorized to release funds.",
-  },
-  {
-    key: "roles.disputeResolvers",
-    label: "Dispute Resolvers",
-    description: "1-5 distinct addresses that resolve disputes.",
-  },
-] as const;
 
 export const UpdateEscrowForm = ({ form, isMulti }: UpdateEscrowFormProps) => {
   // Same trustline UI as Create — component is typed to CreateEscrowFormData;
@@ -123,9 +99,7 @@ export const UpdateEscrowForm = ({ form, isMulti }: UpdateEscrowFormProps) => {
                     min={0}
                     step="any"
                     placeholder={CREATE_ESCROW_PLACEHOLDERS.amount}
-                    value={
-                      typeof field.value === "number" ? field.value : ""
-                    }
+                    value={typeof field.value === "number" ? field.value : ""}
                     onChange={(event) =>
                       field.onChange(
                         event.target.value === ""
@@ -223,76 +197,7 @@ export const UpdateEscrowForm = ({ form, isMulti }: UpdateEscrowFormProps) => {
         <EscrowTrustlineField form={trustlineForm} />
       )}
 
-      <section className="flex flex-col gap-4">
-        <p className="text-sm font-semibold tracking-tight">Roles</p>
-
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          {ROLE_ARRAY_FIELDS.map((role) => (
-            <EscrowRoleAddressList
-              key={role.key}
-              form={form}
-              name={role.key as Path<UpdateEscrowFormData>}
-              label={role.label}
-              description={role.description}
-            />
-          ))}
-
-          {!isMulti ? (
-            <FormField
-              control={form.control}
-              name={"roles.receiver" as Path<UpdateEscrowFormData>}
-              render={({ field }) => (
-                <FormItem className="rounded-xl border border-border p-3 md:p-4">
-                  <FormLabel>Receiver</FormLabel>
-                  <FormDescription>
-                    Single beneficiary for the full release.
-                  </FormDescription>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      value={
-                        typeof field.value === "string" ? field.value : ""
-                      }
-                      placeholder={CREATE_ESCROW_PLACEHOLDERS.stellarAddress}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          ) : null}
-
-          <FormField
-            control={form.control}
-            name="roles.platform"
-            render={({ field }) => (
-              <FormItem className="rounded-xl border border-border p-3 md:p-4">
-                <FormLabel>Platform</FormLabel>
-                <FormDescription>Immutable after creation.</FormDescription>
-                <FormControl>
-                  <Input {...field} disabled />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="roles.admin"
-            render={({ field }) => (
-              <FormItem className="rounded-xl border border-border p-3 md:p-4">
-                <FormLabel>Admin</FormLabel>
-                <FormDescription>Immutable after creation.</FormDescription>
-                <FormControl>
-                  <Input {...field} disabled />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-      </section>
+      <UpdateEscrowRolesFields form={form} isMulti={isMulti} />
     </div>
   );
 };

@@ -5,9 +5,7 @@ import {
   mapEscrowSummaryToStored,
 } from "@/features/escrows/utils/escrow-rest-map.helper";
 
-function buildEscrowSummary(
-  overrides?: Partial<EscrowSummary>,
-): EscrowSummary {
+function buildEscrowSummary(overrides?: Partial<EscrowSummary>): EscrowSummary {
   return {
     network: "testnet",
     contractId: "CDCONTRACT",
@@ -38,6 +36,7 @@ function buildEscrowSummary(
         disputeResolvers: ["G5"],
         receiver: "G6",
         admin: "G7",
+        observers: ["G8"],
       },
       amount: "1000",
       milestones: [{ description: "Done", approvalsTarget: 1 }],
@@ -57,6 +56,9 @@ describe("mapEscrowSummaryToStored", () => {
       amount: 1000,
       balance: 250.5,
       status: "active",
+      roles: expect.objectContaining({
+        observers: ["G8"],
+      }),
     });
   });
 

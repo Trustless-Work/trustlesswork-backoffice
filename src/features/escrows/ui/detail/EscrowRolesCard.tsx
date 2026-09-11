@@ -21,13 +21,16 @@ type EscrowRolesCardProps = {
 export const EscrowRolesCard = ({ escrow }: EscrowRolesCardProps) => {
   const roles = getEscrowRoleEntries(escrow);
   const { getLinkedAddressProps } = useLinkedAddressHighlight();
-  const addressCounts = useMemo(() => getAddressOccurrenceCounts(roles), [roles]);
+  const addressCounts = useMemo(
+    () => getAddressOccurrenceCounts(roles),
+    [roles],
+  );
 
   return (
     <section className="rounded-3xl border border-border bg-card p-4 sm:p-6 lg:p-8">
       <h2 className="text-lg font-semibold tracking-tight">Roles</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        Accounts authorized to act on this escrow.
+        Accounts assigned to this escrow.
       </p>
 
       <ul className="mt-6 grid min-w-0 gap-3 sm:gap-4 md:grid-cols-2">
@@ -56,23 +59,32 @@ export const EscrowRolesCard = ({ escrow }: EscrowRolesCardProps) => {
                 </div>
 
                 <ul className="mt-3 flex min-w-0 flex-col gap-2">
-                  {role.addresses.map((address) => {
-                    const isShared = isSharedEscrowAddress(
-                      addressCounts,
-                      address,
-                    );
-                    const linkProps = getLinkedAddressProps(address, isShared);
+                  {role.addresses.length === 0 ? (
+                    <li className="text-sm text-muted-foreground">
+                      None assigned
+                    </li>
+                  ) : (
+                    role.addresses.map((address) => {
+                      const isShared = isSharedEscrowAddress(
+                        addressCounts,
+                        address,
+                      );
+                      const linkProps = getLinkedAddressProps(
+                        address,
+                        isShared,
+                      );
 
-                    return (
-                      <li key={`${role.id}-${address}`} className="min-w-0">
-                        <EscrowCopyField
-                          value={address}
-                          compact
-                          {...linkProps}
-                        />
-                      </li>
-                    );
-                  })}
+                      return (
+                        <li key={`${role.id}-${address}`} className="min-w-0">
+                          <EscrowCopyField
+                            value={address}
+                            compact
+                            {...linkProps}
+                          />
+                        </li>
+                      );
+                    })
+                  )}
                 </ul>
               </div>
             </div>

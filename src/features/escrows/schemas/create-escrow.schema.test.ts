@@ -15,6 +15,7 @@ const baseRoles = {
   releaseSigners: [WALLET],
   disputeResolvers: [DISPUTE_RESOLVER],
   admin: ADMIN,
+  observers: [],
 };
 
 const trustline = {
@@ -106,9 +107,85 @@ describe("createEscrowSchema", () => {
     }
 
     expect(result.error.issues).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ path: ["amount"] }),
-      ]),
+      expect.arrayContaining([expect.objectContaining({ path: ["amount"] })]),
     );
+  });
+
+  it("allows deploying without observers", () => {
+    const result = createEscrowSchema.safeParse({
+      type: "single-release",
+      engagementId: "eng-no-observers",
+      title: "No observers",
+      description: "Optional observers list omitted",
+      amount: 0,
+      platformFee: 2,
+      roles: {
+        ...baseRoles,
+        receiver: WALLET,
+        observers: undefined,
+      },
+      milestones: [{ description: "Kickoff", approvalsTarget: 1 }],
+      trustline,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) {
+      return;
+    }
+
+    expect(result.data.roles.observers).toEqual([]);
+  });
+
+  it("strips blank observer fields and keeps valid addresses", () => {
+    const observer = `G${"E".repeat(55)}`;
+    const result = createEscrowSchema.safeParse({
+      type: "single-release",
+      engagementId: "eng-observers",
+      title: "With observers",
+      description: "Optional observers list",
+      amount: 0,
+      platformFee: 2,
+      roles: {
+        ...baseRoles,
+        receiver: WALLET,
+        observers: ["", `  ${observer}  `, ""],
+      },
+      milestones: [{ description: "Kickoff", approvalsTarget: 1 }],
+      trustline,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) {
+      return;
+    }
+
+    expect(result.data.roles.observers).toEqual([observer]);
+  });
+
+  it("rejects more than 5 observers", () => {
+    const result = createEscrowSchema.safeParse({
+      type: "single-release",
+      engagementId: "eng-too-many-observers",
+      title: "Too many observers",
+      description: "Over the role list cap",
+      amount: 0,
+      platformFee: 2,
+      roles: {
+        ...baseRoles,
+        receiver: WALLET,
+        observers: [
+          `G${"E".repeat(55)}`,
+          `G${"F".repeat(55)}`,
+          `G${"G".repeat(55)}`,
+          `G${"H".repeat(55)}`,
+          `G${"I".repeat(55)}`,
+          `G${"J".repeat(55)}`,
+        ],
+      },
+      milestones: [{ description: "Kickoff", approvalsTarget: 1 }],
+      trustline,
+    });
+
+    expect(result.success).toBe(false);
   });
 });

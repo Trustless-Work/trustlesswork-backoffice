@@ -176,7 +176,7 @@ export const EscrowDetailSkeleton = ({
         <Skeleton className="h-6 w-20" />
         <Skeleton className="mt-2 h-4 w-64" />
         <div className="mt-6 grid gap-3 sm:gap-4 md:grid-cols-2">
-          {Array.from({ length: 4 }).map((_, index) => (
+          {Array.from({ length: isMulti ? 7 : 8 }).map((_, index) => (
             <RoleItemSkeleton key={index} />
           ))}
         </div>

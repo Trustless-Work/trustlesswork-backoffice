@@ -30,7 +30,6 @@ export const EscrowRolesFields = ({
   escrowType,
   disabled = false,
 }: EscrowRolesFieldsProps) => {
-
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       {CREATE_ESCROW_ROLE_FIELDS.map((role) => {
@@ -47,6 +46,7 @@ export const EscrowRolesFields = ({
               label={role.label}
               description={role.description}
               disabled={disabled}
+              minCount={role.minCount ?? 1}
             />
           );
         }

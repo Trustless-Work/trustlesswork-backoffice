@@ -19,6 +19,31 @@ export const roleAddressArraySchema = z
     `Maximum ${MAX_ROLE_ADDRESS_COUNT} addresses allowed`,
   );
 
+function compactAddressList(value: unknown): unknown {
+  if (value === undefined || value === null) {
+    return [];
+  }
+
+  if (!Array.isArray(value)) {
+    return value;
+  }
+
+  return value
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0);
+}
+
+export const optionalRoleAddressArraySchema = z.preprocess(
+  compactAddressList,
+  z
+    .array(stellarAddressSchema)
+    .max(
+      MAX_ROLE_ADDRESS_COUNT,
+      `Maximum ${MAX_ROLE_ADDRESS_COUNT} addresses allowed`,
+    ),
+);
+
 export const DISPUTE_RESOLVER_OVERLAP_MESSAGE =
   "A dispute resolver cannot also appear in approvers, service providers, release signers, or be the receiver / platform.";
 
@@ -112,6 +137,7 @@ export const baseRolesSchema = z.object({
   releaseSigners: roleAddressArraySchema,
   disputeResolvers: roleAddressArraySchema,
   admin: stellarAddressSchema,
+  observers: optionalRoleAddressArraySchema,
 });
 
 export const singleReleaseRolesSchema = withRolesOverlapValidation(
