@@ -19,7 +19,6 @@ import {
 import { useRegisterForm } from "@/features/auth/hooks/useRegisterForm";
 import type { RegisterProfileInput } from "@/features/auth/types/auth.types";
 import { formatAddress } from "@/helpers/format.helper";
-import { AuthDivider } from "@/components/ui/auth-divider";
 
 type RegisterFormProps = {
   walletAddress: string;
@@ -43,7 +42,7 @@ export const RegisterForm = ({
     <div className="flex flex-col gap-2">
       <Form {...form}>
         <form onSubmit={onSubmit} className="flex flex-col gap-3">
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <FormField
               control={form.control}
               name="firstName"
@@ -83,38 +82,57 @@ export const RegisterForm = ({
                 </FormItem>
               )}
             />
-          </div>
 
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Email <span className="text-destructive">*</span>
-                </FormLabel>
-                <InputGroup>
-                  <InputGroupAddon align="inline-start">
-                    <AtSignIcon />
-                  </InputGroupAddon>
+            <FormField
+              control={form.control}
+              name="organizationName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Organization <span className="text-destructive">*</span>
+                  </FormLabel>
                   <FormControl>
-                    <InputGroupInput
+                    <Input
                       {...field}
-                      placeholder="name@example.com"
-                      type="email"
-                      inputMode="email"
-                      autoComplete="email"
-                      spellCheck={false}
+                      placeholder="Acme Labs"
+                      autoComplete="organization"
                       disabled={isSubmitting}
                     />
                   </FormControl>
-                </InputGroup>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <AuthDivider>Create Account</AuthDivider>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Email <span className="text-destructive">*</span>
+                  </FormLabel>
+                  <InputGroup>
+                    <InputGroupAddon align="inline-start">
+                      <AtSignIcon />
+                    </InputGroupAddon>
+                    <FormControl>
+                      <InputGroupInput
+                        {...field}
+                        placeholder="name@example.com"
+                        type="email"
+                        inputMode="email"
+                        autoComplete="email"
+                        spellCheck={false}
+                        disabled={isSubmitting}
+                      />
+                    </FormControl>
+                  </InputGroup>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <Button
             className="w-full"

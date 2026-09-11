@@ -84,7 +84,9 @@ export interface GeneratedApiKeyResponse
 export type RegisterProfileInput = Required<
   Pick<UserProfileFields, "firstName" | "email">
 > &
-  Partial<Pick<UserProfileFields, "lastName">>;
+  Partial<Pick<UserProfileFields, "lastName">> & {
+    organizationName: string;
+  };
 
 // ─── Auth requests (hierarchy) ──────────────────────────────────────────────
 
@@ -100,6 +102,7 @@ export interface RegisterVerifyRequest extends AuthVerifyRequest {
   email?: string;
   firstName?: string;
   lastName?: string;
+  organizationName?: string;
 }
 
 // ─── Compile-time contracts (zero runtime cost) ─────────────────────────────
@@ -116,6 +119,8 @@ type _RegisterProfileShape = ExpectTrue<
   AssertEqual<
     RegisterProfileInput,
     Required<Pick<UserProfileFields, "firstName" | "email">> &
-      Partial<Pick<UserProfileFields, "lastName">>
+      Partial<Pick<UserProfileFields, "lastName">> & {
+        organizationName: string;
+      }
   >
 >;

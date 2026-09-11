@@ -22,6 +22,7 @@ export function useRegisterForm({
     defaultValues: {
       firstName: "",
       lastName: "",
+      organizationName: "",
       email: "",
     },
     mode: "onSubmit",
@@ -32,6 +33,7 @@ export function useRegisterForm({
     const profile: RegisterProfileInput = {
       firstName: values.firstName.trim(),
       email: values.email.trim(),
+      organizationName: values.organizationName.trim(),
       lastName: values.lastName.trim() || undefined,
     };
 
