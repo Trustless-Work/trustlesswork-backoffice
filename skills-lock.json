@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "trustless-work-dev": {
+      "source": "trustless-work/trustlesswork-skill",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "bcb6089932f9ec5adcacd82691855b42acb78068783fcfa2b0947c5278062f17"
+    },
     "typescript-advanced-types": {
       "source": "wshobson/agents",
       "sourceType": "github",
