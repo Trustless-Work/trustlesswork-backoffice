@@ -16,7 +16,6 @@ import { createEscrowReadService } from "@/features/escrows/services/escrow-read
 import type { EscrowListFilters } from "@/features/escrows/types/escrow.types";
 import { flattenKeysetPages } from "@/lib/pagination";
 import { DEFAULT_KEYSET_LIMIT } from "@/types/pagination.entity";
-import { useActiveOrganization } from "@/providers/OrganizationProvider";
 import { useWalletContext } from "@/providers/WalletProvider";
 
 function useEscrowReadService() {
@@ -27,19 +26,15 @@ function useEscrowReadService() {
 
 export function useEscrowsInfinite(filters?: EscrowListFilters) {
   const { filters: urlFilters } = useEscrowListSearchParams();
-  const { activeOrganizationId } = useActiveOrganization();
   const { hasWalletHydrated } = useWalletContext();
   const service = useEscrowReadService();
 
-  const resolvedFilters = useMemo((): EscrowListFilters => {
-    const base = filters ?? urlFilters;
-    return {
-      ...base,
-      platformId: activeOrganizationId ?? "",
-    };
-  }, [filters, urlFilters, activeOrganizationId]);
+  const resolvedFilters = useMemo(
+    (): EscrowListFilters => filters ?? urlFilters,
+    [filters, urlFilters],
+  );
 
-  const canFetch = hasWalletHydrated && Boolean(activeOrganizationId);
+  const canFetch = hasWalletHydrated;
 
   const query = useInfiniteQuery({
     queryKey: escrowsListQueryKey(resolvedFilters),
