@@ -5,6 +5,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Breadcrumb } from "@/components/shared/Breadcrumb";
 import { NetworkToggle } from "@/components/shared/NetworkToggle";
 import { ToggleTheme } from "@/components/shared/ToggleTheme";
+import { WalletButton } from "@/components/tw-blocks/wallet-kit/WalletButtons";
 
 export const AdminNavbar = () => {
   return (
@@ -21,6 +22,7 @@ export const AdminNavbar = () => {
         </div>
 
         <div className="hidden shrink-0 items-center gap-2 md:flex">
+          <WalletButton />
           <NetworkToggle />
           <ToggleTheme />
         </div>
@@ -30,7 +32,8 @@ export const AdminNavbar = () => {
         </div>
       </div>
 
-      <div className="border-t border-border/60 px-3 py-2 md:hidden">
+      <div className="flex flex-col gap-2 border-t border-border/60 px-3 py-2 md:hidden">
+        <WalletButton mobileBar />
         <NetworkToggle className="w-full justify-center px-2" />
       </div>
     </header>

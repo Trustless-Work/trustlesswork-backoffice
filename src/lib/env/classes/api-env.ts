@@ -10,4 +10,8 @@ export class ApiEnv {
   get adminApiKey(): string | undefined {
     return this.config.BACKOFFICE_ADMIN_API_KEY;
   }
+
+  get payrollApiKey(): string | undefined {
+    return this.config.PAYROLL_API_KEY;
+  }
 }

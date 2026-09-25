@@ -5,6 +5,11 @@ export const clientEnvSchema = createEnv({
   server: {},
   client: {
     NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: z.string().min(1).optional(),
+    NEXT_PUBLIC_PAYROLL_PLATFORM_ID: z.string().min(1).optional(),
+    NEXT_PUBLIC_PAYROLL_DISPUTE_RESOLVER: z
+      .string()
+      .regex(/^G[A-Z2-7]{55}$/, "Must be a Stellar public key (G…)")
+      .optional(),
     // `.url()` alone accepts any scheme, including the `postgresql://`
     // connection string — which would also leak the database password into the
     // client bundle. Require the REST endpoint explicitly so a wrong value
@@ -27,6 +32,10 @@ export const clientEnvSchema = createEnv({
   runtimeEnv: {
     NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID:
       process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
+    NEXT_PUBLIC_PAYROLL_PLATFORM_ID:
+      process.env.NEXT_PUBLIC_PAYROLL_PLATFORM_ID,
+    NEXT_PUBLIC_PAYROLL_DISPUTE_RESOLVER:
+      process.env.NEXT_PUBLIC_PAYROLL_DISPUTE_RESOLVER,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,

@@ -76,11 +76,27 @@ describe("mapEscrowSummaryToListItem", () => {
     expect(item).toMatchObject({
       contractId: "CDCONTRACT",
       title: "Payroll",
+      engagementId: "ENG-1",
       balance: 250.5,
       assetSymbol: "USDC",
       layout: "standard",
       financial: null,
     });
+  });
+
+  it("reads engagementId from snapshot when root field is missing", () => {
+    const item = mapEscrowSummaryToListItem(
+      buildEscrowSummary({
+        engagementId: undefined as unknown as string,
+        snapshot: {
+          ...buildEscrowSummary().snapshot,
+          engagementId: "payroll-2026-09-Q2",
+        },
+      }),
+    );
+
+    expect(item?.engagementId).toBe("payroll-2026-09-Q2");
+    expect(item?.stored.engagementId).toBe("payroll-2026-09-Q2");
   });
 
   it("prefers root asset name over trustline symbol", () => {

@@ -26,7 +26,10 @@ function formatBreadcrumbLabel(
 ): string {
   const decoded = decodeURIComponent(segment);
 
-  if (parentSegment === "escrows" && decoded.length > 6) {
+  if (
+    (parentSegment === "escrows" || parentSegment === "payroll") &&
+    decoded.length > 6
+  ) {
     return truncateStellarAddress(decoded, 3, 3);
   }
 
@@ -48,7 +51,9 @@ function getBreadcrumbItems(pathname: string): BreadcrumbItemData[] {
     href: `/${segments.slice(0, index + 1).join("/")}`,
     label: formatBreadcrumbLabel(segment, segments[index - 1]),
     title:
-      segments[index - 1] === "escrows" && segment.length > 6
+      (segments[index - 1] === "escrows" ||
+        segments[index - 1] === "payroll") &&
+      segment.length > 6
         ? decodeURIComponent(segment)
         : undefined,
   }));

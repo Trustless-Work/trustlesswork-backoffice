@@ -91,7 +91,7 @@ function asSnapshot(value: unknown): EscrowSnapshot | null {
 
 type SummaryLike = {
   contractId: string;
-  engagementId: string;
+  engagementId?: string | null;
   createdAt: string;
   updatedAt: string;
   status: EscrowStatus | string | null;
@@ -265,7 +265,7 @@ export function mapEscrowSummaryToListItem(
     contractId: summary.contractId,
     type: stored.type,
     status,
-    engagementId: summary.engagementId,
+    engagementId: stored.engagementId || summary.engagementId || null,
     title: stored.title,
     description: stored.description,
     createdAt: summary.createdAt,

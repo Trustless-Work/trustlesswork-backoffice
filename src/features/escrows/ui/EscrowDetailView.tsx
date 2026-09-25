@@ -16,9 +16,15 @@ import { EscrowRolesCard } from "@/features/escrows/ui/detail/EscrowRolesCard";
 
 type EscrowDetailViewProps = {
   contractId: string;
+  backHref?: string;
+  backLabel?: string;
 };
 
-export const EscrowDetailView = ({ contractId }: EscrowDetailViewProps) => {
+export const EscrowDetailView = ({
+  contractId,
+  backHref = "/dashboard/escrows",
+  backLabel = "Back to escrows",
+}: EscrowDetailViewProps) => {
   const router = useRouter();
   const { detail, escrow, isResolving, isError, refetch } =
     useEscrowDetail(contractId);
@@ -52,9 +58,9 @@ export const EscrowDetailView = ({ contractId }: EscrowDetailViewProps) => {
         <NoData
           title="Escrow not found"
           description="This escrow is not available yet. It may still be indexing after deploy."
-          actionLabel="Back to escrows"
+          actionLabel={backLabel}
           onAction={() => {
-            router.push("/dashboard/escrows");
+            router.push(backHref);
           }}
         />
       </Container>
@@ -68,7 +74,11 @@ export const EscrowDetailView = ({ contractId }: EscrowDetailViewProps) => {
     >
       <Container className="border-none bg-transparent p-0 shadow-none">
         <div className="flex flex-col gap-6">
-          <EscrowDetailHeader escrow={escrow} />
+          <EscrowDetailHeader
+            escrow={escrow}
+            backHref={backHref}
+            backLabel={backLabel}
+          />
 
           <EscrowOverviewSection escrow={escrow} />
           <EscrowDisputePanel escrow={escrow} />

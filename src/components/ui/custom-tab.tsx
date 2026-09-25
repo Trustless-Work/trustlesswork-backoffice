@@ -34,14 +34,40 @@ type RoundedTabLinksProps = {
 
 function useSlidingIndicator(activeValue: string, itemsLength: number) {
   const listRef = useRef<HTMLDivElement>(null);
-  const [indicator, setIndicator] = useState({ left: 0, width: 0 });
+  const [indicator, setIndicator] = useState({
+    left: 0,
+    width: 0,
+    ready: false,
+  });
 
   useEffect(() => {
     const list = listRef.current;
     if (!list) return;
-    const el = list.querySelector<HTMLElement>(`[data-value="${activeValue}"]`);
-    if (!el) return;
-    setIndicator({ left: el.offsetLeft, width: el.offsetWidth });
+
+    const update = () => {
+      const el = list.querySelector<HTMLElement>(
+        `[data-value="${CSS.escape(activeValue)}"]`,
+      );
+      if (!el) return;
+      const width = el.offsetWidth;
+      setIndicator({
+        left: el.offsetLeft,
+        width,
+        ready: width > 0,
+      });
+    };
+
+    update();
+
+    const observer = new ResizeObserver(() => {
+      update();
+    });
+    observer.observe(list);
+    list
+      .querySelectorAll<HTMLElement>("[data-value]")
+      .forEach((node) => observer.observe(node));
+
+    return () => observer.disconnect();
   }, [activeValue, itemsLength]);
 
   return { listRef, indicator };
@@ -78,7 +104,12 @@ export function RoundedTabs({
     >
       <span
         aria-hidden
-        className="absolute top-1 bottom-1 rounded-full bg-card shadow-sm ring-1 ring-border transition-all duration-300 ease-out"
+        className={cn(
+          "absolute top-1 bottom-1 rounded-full bg-card shadow-sm ring-1 ring-border",
+          indicator.ready
+            ? "transition-all duration-300 ease-out"
+            : "opacity-0",
+        )}
         style={{ left: indicator.left, width: indicator.width }}
       />
 
@@ -137,7 +168,12 @@ export function RoundedTabLinks({
     >
       <span
         aria-hidden
-        className="absolute top-1 bottom-1 rounded-full bg-card shadow-sm ring-1 ring-border transition-all duration-300 ease-out"
+        className={cn(
+          "absolute top-1 bottom-1 rounded-full bg-card shadow-sm ring-1 ring-border",
+          indicator.ready
+            ? "transition-all duration-300 ease-out"
+            : "opacity-0",
+        )}
         style={{ left: indicator.left, width: indicator.width }}
       />
 

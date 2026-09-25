@@ -7,6 +7,7 @@ import type { UserResponse } from "@/types";
 import {
   clearClientAuthState,
   endIntentionalLogout,
+  isAdminAuthArea,
   isIntentionalLogout,
 } from "@/features/auth/lib/logout-client";
 
@@ -29,6 +30,12 @@ export function useSession() {
   useEffect(() => {
     if (query.data) {
       endIntentionalLogout();
+      return;
+    }
+
+    // Admin has no SEP-10 session by design; a stored wallet is for payroll
+    // signing and must not be treated as an expired dashboard login.
+    if (isAdminAuthArea()) {
       return;
     }
 
