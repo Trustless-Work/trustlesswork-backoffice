@@ -15,14 +15,15 @@ export const OnboardingWalkthroughProvider = ({
 }: OnboardingWalkthroughProviderProps) => {
   const { data: user } = useSession();
   const walkthrough = useOnboardingWalkthrough(user?.id);
+  const { tryAutoOpen } = walkthrough;
 
   useEffect(() => {
     if (!user?.id) {
       return;
     }
 
-    walkthrough.tryAutoOpen();
-  }, [user?.id, walkthrough.tryAutoOpen]);
+    tryAutoOpen();
+  }, [user?.id, tryAutoOpen]);
 
   return (
     <OnboardingWalkthroughContextProvider value={walkthrough}>
