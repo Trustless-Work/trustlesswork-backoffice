@@ -1,6 +1,7 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import {
   clearClientAuthState,
+  isAdminAuthArea,
   isIntentionalLogout,
 } from "@/features/auth/lib/logout-client";
 import { getStoredNetwork } from "@/lib/client-storage";
@@ -43,6 +44,7 @@ http.interceptors.response.use(
       typeof window !== "undefined" &&
       apiError.status === 401 &&
       !window.location.pathname.startsWith("/login") &&
+      !isAdminAuthArea() &&
       !isIntentionalLogout()
     ) {
       void clearClientAuthState({ reason: "unauthorized" });

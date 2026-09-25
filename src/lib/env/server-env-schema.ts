@@ -6,6 +6,9 @@ export const serverEnvSchema = createEnv({
     SESSION_SECRET: z.string().min(32),
     CORE_API_URL: z.string().url(),
     BACKOFFICE_ADMIN_API_KEY: z.string().min(1).optional(),
+    // ESCROW_MANAGER key scoped to NEXT_PUBLIC_PAYROLL_PLATFORM_ID.
+    // Used by /admin/payroll via /api/admin/payroll/core (not the SEP-10 session).
+    PAYROLL_API_KEY: z.string().min(1).optional(),
     ADMIN_ALLOWED_EMAIL_DOMAIN: z
       .string()
       .trim()
@@ -23,6 +26,7 @@ export const serverEnvSchema = createEnv({
     SESSION_SECRET: process.env.SESSION_SECRET,
     CORE_API_URL: process.env.CORE_API_URL,
     BACKOFFICE_ADMIN_API_KEY: process.env.BACKOFFICE_ADMIN_API_KEY,
+    PAYROLL_API_KEY: process.env.PAYROLL_API_KEY,
     ADMIN_ALLOWED_EMAIL_DOMAIN: process.env.ADMIN_ALLOWED_EMAIL_DOMAIN,
     NODE_ENV: process.env.NODE_ENV,
   },

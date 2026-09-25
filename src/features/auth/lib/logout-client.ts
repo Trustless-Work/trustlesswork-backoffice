@@ -44,6 +44,21 @@ function clearWalletStorage(): void {
   localStorage.removeItem("walletName");
 }
 
+function isAdminPath(pathname: string): boolean {
+  return pathname === "/admin" || pathname.startsWith("/admin/");
+}
+
+/**
+ * True when the operator is in the Supabase MFA backoffice.
+ * Wallet connect there is for payroll signing and is independent of SEP-10.
+ */
+export function isAdminAuthArea(): boolean {
+  if (typeof window === "undefined") {
+    return false;
+  }
+  return isAdminPath(window.location.pathname);
+}
+
 export async function clearClientAuthState(
   options: ClearClientAuthStateOptions = {},
 ): Promise<void> {
@@ -65,6 +80,14 @@ export async function clearClientAuthState(
   queryClient?.setQueryData(["session", "me"], null);
   queryClient?.removeQueries({ queryKey: ["session"] });
 
+  // `/admin` uses Supabase MFA, not the wallet iron-session. Operators often
+  // keep a wallet connected for payroll without a dashboard SEP-10 session —
+  // wiping the kit / localStorage on every refresh would disconnect them.
+  // Still clear the cached SEP-10 user above; skip wallet teardown + redirect.
+  if (isAdminAuthArea()) {
+    return;
+  }
+
   clearWalletStorage();
   resetWalletKitLoader();
   await disconnectWalletKitSafe();
@@ -78,14 +101,7 @@ export async function clearClientAuthState(
   if (redirect && typeof window !== "undefined") {
     const currentPath = window.location.pathname;
 
-    // `/admin` is a separate auth system (Supabase, `sb-*` cookies). Losing the
-    // wallet iron-session there is expected and must not bounce the operator to
-    // the wallet login page. The cleanup above still runs; only the redirect is
-    // suppressed.
-    const isWalletAuthArea =
-      !currentPath.startsWith("/login") && !currentPath.startsWith("/admin");
-
-    if (isWalletAuthArea) {
+    if (!currentPath.startsWith("/login")) {
       window.location.assign(redirectTo);
     }
   }

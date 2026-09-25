@@ -5,6 +5,7 @@ import {
   KeyRoundIcon,
   LayoutDashboardIcon,
   Settings2Icon,
+  WalletIcon,
   WebhookIcon,
 } from "lucide-react";
 
@@ -59,6 +60,12 @@ export const ADMIN_PAGES: Record<string, DashboardPageConfig> = {
     description:
       "Platform growth, revenue by token, and escrow lifecycle insights.",
     icon: LayoutDashboardIcon,
+  },
+  "/admin/payroll": {
+    title: "Payroll",
+    description:
+      "Create and fund multi-release escrows to pay the Trustless Work team.",
+    icon: WalletIcon,
   },
 };
 

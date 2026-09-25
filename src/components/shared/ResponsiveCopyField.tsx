@@ -30,7 +30,22 @@ function getResponsiveValue(
   compact: boolean,
   maxVisibleChars?: number,
 ): string {
+  const truncateTo = (visibleChars: number): string => {
+    if (value.length <= visibleChars) {
+      return value;
+    }
+
+    const headChars = Math.ceil(visibleChars * 0.56);
+    const tailChars = Math.max(4, visibleChars - headChars);
+
+    return `${value.slice(0, headChars)}${ELLIPSIS}${value.slice(-tailChars)}`;
+  };
+
+  // Avoid flashing the full address before ResizeObserver measures width.
   if (width <= 0) {
+    if (maxVisibleChars !== undefined) {
+      return truncateTo(Math.max(maxVisibleChars, MIN_VISIBLE_CHARS));
+    }
     return value;
   }
 
@@ -59,10 +74,7 @@ function getResponsiveValue(
     return value;
   }
 
-  const headChars = Math.ceil(visibleChars * 0.56);
-  const tailChars = Math.max(4, visibleChars - headChars);
-
-  return `${value.slice(0, headChars)}${ELLIPSIS}${value.slice(-tailChars)}`;
+  return truncateTo(visibleChars);
 }
 
 export const ResponsiveCopyField = ({

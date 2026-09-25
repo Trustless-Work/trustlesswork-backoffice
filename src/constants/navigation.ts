@@ -3,6 +3,7 @@ import {
   DiscIcon,
   KeyRoundIcon,
   LayoutDashboardIcon,
+  WalletIcon,
   WebhookIcon,
 } from "lucide-react";
 import {
@@ -81,6 +82,16 @@ export const ADMIN_NAV_GROUPS: DashboardNavGroup[] = [
           url: `/admin?tab=${tab.id}`,
           icon: tab.icon,
         })),
+      },
+    ],
+  },
+  {
+    label: "Operations",
+    items: [
+      {
+        title: "Payroll",
+        url: "/admin/payroll",
+        icon: WalletIcon,
       },
     ],
   },
