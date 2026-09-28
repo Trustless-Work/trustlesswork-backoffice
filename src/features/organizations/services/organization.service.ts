@@ -9,6 +9,7 @@ import {
 } from "@/lib/schemas/api-response.schemas";
 import { parseKeysetPageWithSchema } from "@/lib/schemas/keyset-page.schema";
 import type { KeysetListParams, KeysetPage } from "@/types/pagination.entity";
+import { normalizeSubjectWalletAddress } from "@/features/organizations/helpers/member-from-user.helper";
 import type {
   CreateOrganizationInput,
   MemberResponse,
@@ -17,6 +18,23 @@ import type {
   UpdateOrganizationInput,
   UpsertMemberInput,
 } from "@/features/organizations/types/organization.types";
+
+function sanitizeSubjectWritePayload<T extends { walletAddress?: string }>(
+  payload: T,
+): T {
+  if (payload.walletAddress === undefined) {
+    return payload;
+  }
+
+  const walletAddress = normalizeSubjectWalletAddress(payload.walletAddress);
+  if (!walletAddress) {
+    const rest = { ...payload };
+    delete rest.walletAddress;
+    return rest;
+  }
+
+  return { ...payload, walletAddress };
+}
 
 export class OrganizationService {
   async listMinePage(
@@ -75,7 +93,7 @@ export class OrganizationService {
   ): Promise<MemberResponse> {
     const { data } = await http.post<MemberResponse>(
       `/core/platforms/${organizationId}/subjects`,
-      payload,
+      sanitizeSubjectWritePayload(payload),
     );
     return data;
   }
@@ -87,7 +105,7 @@ export class OrganizationService {
   ): Promise<MemberResponse> {
     const { data } = await http.patch<MemberResponse>(
       `/core/platforms/${encodeURIComponent(organizationId)}/subjects/${encodeURIComponent(memberId)}`,
-      payload,
+      sanitizeSubjectWritePayload(payload),
     );
     return data;
   }

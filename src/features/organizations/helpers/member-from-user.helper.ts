@@ -1,12 +1,41 @@
 import type { UserResponse } from "@/types";
 import type {
   MemberResponse,
+  UpdateMemberInput,
   UpsertMemberInput,
 } from "@/features/organizations/types/organization.types";
+import { isStellarPublicKey } from "@/helpers/stellar.helper";
 import {
   getUserDisplayName,
   getUserEmailLabel,
 } from "@/helpers/user-display.helper";
+
+export function normalizeSubjectWalletAddress(
+  walletAddress?: string | null,
+): string | undefined {
+  const trimmed = walletAddress?.trim() ?? "";
+  if (!trimmed || !isStellarPublicKey(trimmed)) {
+    return undefined;
+  }
+
+  return trimmed;
+}
+
+export function buildSubjectWalletPatch(
+  member: MemberResponse,
+  walletAddress?: string | null,
+): UpdateMemberInput | null {
+  const nextWallet = normalizeSubjectWalletAddress(walletAddress);
+  if (!nextWallet) {
+    return null;
+  }
+
+  if (normalizeSubjectWalletAddress(member.walletAddress)) {
+    return null;
+  }
+
+  return { walletAddress: nextWallet };
+}
 
 export function getUserCommandValue(user: UserResponse): string {
   const email = user.email?.trim();
@@ -18,7 +47,7 @@ export function mapUserToMemberInput(
   walletAddress?: string | null,
 ): UpsertMemberInput {
   const email = user.email?.trim();
-  const wallet = walletAddress?.trim();
+  const wallet = normalizeSubjectWalletAddress(walletAddress);
 
   return {
     externalId: user.id,
@@ -34,14 +63,14 @@ export function buildMemberFromUser(
   walletAddress?: string | null,
 ): MemberResponse {
   const email = user.email?.trim();
-  const wallet = walletAddress?.trim();
+  const wallet = normalizeSubjectWalletAddress(walletAddress);
 
   return {
     id: user.id,
     platformId: organizationId,
     externalId: user.id,
     label: getUserDisplayName(user),
-    walletAddress: wallet || null,
+    walletAddress: wallet ?? null,
     metadata: email ? { email } : null,
   };
 }

@@ -6,6 +6,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import {
+  buildSubjectWalletPatch,
   isMemberLinkedToUser,
   mapUserToMemberInput,
   withCurrentUserMember,
@@ -57,43 +58,67 @@ export function useOrganizationMembersDisplay(organizationId: string | null) {
   const queryClient = useQueryClient();
   const query = useOrganizationMembers(organizationId);
   const { user } = useAuth();
-  const { walletAddress } = useWalletContext();
-  const ensuredOrganizationRef = useRef<string | null>(null);
+  const { walletAddress, hasWalletHydrated } = useWalletContext();
+  const subjectSyncRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (
       !organizationId ||
       !user ||
+      !hasWalletHydrated ||
       !query.isSuccess ||
-      query.isFetching ||
-      ensuredOrganizationRef.current === organizationId
+      query.isFetching
     ) {
       return;
     }
 
-    const apiMembers = query.members;
-    if (
-      apiMembers.some((member) =>
-        isMemberLinkedToUser(member, user, walletAddress),
-      )
-    ) {
-      ensuredOrganizationRef.current = organizationId;
+    const linkedMember = query.members.find((member) =>
+      isMemberLinkedToUser(member, user, walletAddress),
+    );
+
+    const invalidateMembers = () =>
+      queryClient.invalidateQueries({
+        queryKey: organizationMembersQueryKey(organizationId),
+      });
+
+    if (!linkedMember) {
+      const syncKey = `create:${organizationId}:${user.id}`;
+      if (subjectSyncRef.current === syncKey) {
+        return;
+      }
+
+      subjectSyncRef.current = syncKey;
+      void organizationService
+        .upsertMember(
+          organizationId,
+          mapUserToMemberInput(user, walletAddress),
+        )
+        .then(invalidateMembers)
+        .catch(() => {
+          subjectSyncRef.current = null;
+        });
       return;
     }
 
-    ensuredOrganizationRef.current = organizationId;
+    const walletPatch = buildSubjectWalletPatch(linkedMember, walletAddress);
+    if (!walletPatch?.walletAddress) {
+      return;
+    }
 
+    const syncKey = `wallet:${organizationId}:${linkedMember.id}:${walletPatch.walletAddress}`;
+    if (subjectSyncRef.current === syncKey) {
+      return;
+    }
+
+    subjectSyncRef.current = syncKey;
     void organizationService
-      .upsertMember(organizationId, mapUserToMemberInput(user, walletAddress))
-      .then(() =>
-        queryClient.invalidateQueries({
-          queryKey: organizationMembersQueryKey(organizationId),
-        }),
-      )
+      .updateMember(organizationId, linkedMember.id, walletPatch)
+      .then(invalidateMembers)
       .catch(() => {
-        ensuredOrganizationRef.current = null;
+        subjectSyncRef.current = null;
       });
   }, [
+    hasWalletHydrated,
     organizationId,
     query.isFetching,
     query.isSuccess,
