@@ -1,6 +1,13 @@
 import type { ListEscrowsParams } from "@trustless-work/escrow";
-import type { EscrowListFilters } from "@/features/escrows/types/escrow.types";
+import type {
+  EscrowListFilters,
+  EscrowType,
+} from "@/features/escrows/types/escrow.types";
 import { DEFAULT_KEYSET_LIMIT } from "@/types/pagination.entity";
+
+export type EscrowListRequestParams = Omit<ListEscrowsParams, "contractType"> & {
+  type?: EscrowType;
+};
 
 export function toRestListParams(
   filters: EscrowListFilters,
@@ -8,10 +15,10 @@ export function toRestListParams(
     cursor?: string;
     limit?: number;
   },
-): ListEscrowsParams {
-  const params: ListEscrowsParams = {
+): EscrowListRequestParams {
+  const params: EscrowListRequestParams = {
     scope: filters.scope,
-    contractType: filters.type,
+    type: filters.type,
     sort: filters.sort,
     order: filters.order,
     limit: options?.limit ?? DEFAULT_KEYSET_LIMIT,

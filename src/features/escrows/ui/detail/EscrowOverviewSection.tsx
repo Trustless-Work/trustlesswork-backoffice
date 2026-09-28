@@ -4,19 +4,17 @@ import { EscrowConnectedRoleBadges } from "@/features/escrows/ui/detail/EscrowCo
 import { EscrowCopyField } from "@/features/escrows/ui/detail/EscrowCopyField";
 import { EscrowExplorerLinks } from "@/features/escrows/ui/detail/EscrowExplorerLinks";
 import { EscrowGeneralActions } from "@/features/escrows/ui/detail/EscrowGeneralActions";
-import {
-  getEscrowAssetSymbol,
-  getEscrowDisplayAmount,
-} from "@/features/escrows/utils/escrow-display.helper";
+import { getEscrowAssetSymbol } from "@/features/escrows/utils/escrow-display.helper";
 
 type EscrowOverviewSectionProps = {
   escrow: StoredEscrow;
+  amount: number | null;
 };
 
 export const EscrowOverviewSection = ({
   escrow,
+  amount,
 }: EscrowOverviewSectionProps) => {
-  const amount = getEscrowDisplayAmount(escrow);
   const symbol = getEscrowAssetSymbol(escrow);
 
   return (
@@ -37,13 +35,17 @@ export const EscrowOverviewSection = ({
           </div>
 
           <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-6 lg:grid-cols-4">
-            <UsdcAmountStat
-              label="Amount"
-              amount={amount}
-              symbol={symbol}
-              size="2xl"
-              emphasis
-            />
+            {amount === null ? (
+              <OverviewStat label="Amount" value="Pending" />
+            ) : (
+              <UsdcAmountStat
+                label="Amount"
+                amount={amount}
+                symbol={symbol}
+                size="2xl"
+                emphasis
+              />
+            )}
             <UsdcAmountStat
               label="Balance"
               amount={escrow.balance}

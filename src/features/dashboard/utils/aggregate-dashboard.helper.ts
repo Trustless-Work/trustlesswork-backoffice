@@ -16,6 +16,7 @@ import {
   formatFullCurrency,
   formatInteger,
 } from "@/helpers/chart-format.helper";
+import { readEscrowWireAmount } from "@/helpers/escrow-amount.helper";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const WINDOW_DAYS = 30;
@@ -110,6 +111,15 @@ function resolveBalance(
   return parseDashboardAmount(summary.balance);
 }
 
+function resolveRecordedAmount(row: object): number | null {
+  const amount = readEscrowWireAmount(row);
+  if (amount === null) {
+    return null;
+  }
+
+  return parseDashboardAmount(amount);
+}
+
 function resolveDealSize(
   summary: EscrowSummary,
   financial: EscrowFinancial | undefined,
@@ -119,11 +129,16 @@ function resolveDealSize(
     if (deposited > 0) {
       return deposited;
     }
-    return parseDashboardAmount(financial.totalAmount);
+
+    const financialAmount = resolveRecordedAmount(financial);
+    if (financialAmount !== null) {
+      return financialAmount;
+    }
   }
 
-  if (summary.totalAmount != null) {
-    return parseDashboardAmount(summary.totalAmount);
+  const summaryAmount = resolveRecordedAmount(summary);
+  if (summaryAmount !== null) {
+    return summaryAmount;
   }
 
   return parseDashboardAmount(summary.balance);

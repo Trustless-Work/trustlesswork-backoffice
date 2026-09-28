@@ -78,7 +78,7 @@ describe("escrowListFiltersToSearchParams", () => {
 });
 
 describe("toRestListParams", () => {
-  it("maps filters to REST list params including contractType", () => {
+  it("maps filters to REST list params including type", () => {
     const params = toRestListParams(
       {
         ...DEFAULT_ESCROW_LIST_FILTERS,
@@ -92,7 +92,7 @@ describe("toRestListParams", () => {
 
     expect(params).toMatchObject({
       scope: "mine",
-      contractType: "multi-release",
+      type: "multi-release",
       status: "released",
       participant: "GXYZ",
       role: "receiver",
@@ -101,6 +101,7 @@ describe("toRestListParams", () => {
       sort: "createdAt",
       order: "desc",
     });
+    expect(params).not.toHaveProperty("contractType");
   });
 });
 

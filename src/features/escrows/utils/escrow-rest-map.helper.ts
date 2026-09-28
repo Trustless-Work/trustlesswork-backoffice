@@ -22,6 +22,7 @@ import type {
   StoredSingleReleaseEscrow,
 } from "@/features/escrows/types/escrow.types";
 import { isEscrowType } from "@/features/escrows/types/escrow.types";
+import { readEscrowWireAmount } from "@/helpers/escrow-amount.helper";
 
 export function parseEscrowAmount(
   value: string | number | null | undefined,
@@ -96,7 +97,6 @@ type SummaryLike = {
   updatedAt: string;
   status: EscrowStatus | string | null;
   type: EscrowType | string;
-  totalAmount: string | null;
   balance?: string;
   asset?: EscrowAsset | null;
   snapshot: unknown;
@@ -227,23 +227,13 @@ export function mapEscrowSummaryToStored(
   return null;
 }
 
-function resolveTotalAmount(
-  summary: SummaryLike,
-  stored: StoredEscrow,
-): number | null {
-  if (summary.totalAmount != null) {
-    return parseEscrowAmount(summary.totalAmount);
+function toNullableEscrowAmount(row: object): number | null {
+  const amount = readEscrowWireAmount(row);
+  if (amount === null) {
+    return null;
   }
 
-  if ("amount" in stored) {
-    return parseEscrowAmount(stored.amount);
-  }
-
-  return stored.milestones.reduce(
-    (sum, milestone) =>
-      sum + ("amount" in milestone ? parseEscrowAmount(milestone.amount) : 0),
-    0,
-  );
+  return parseEscrowAmount(amount);
 }
 
 export function mapEscrowSummaryToListItem(
@@ -255,7 +245,7 @@ export function mapEscrowSummaryToListItem(
   }
 
   const snapshot = asSnapshot(summary.snapshot);
-  const totalAmount = resolveTotalAmount(summary, stored);
+  const amount = toNullableEscrowAmount(summary);
   const status = (summary.status ?? stored.status ?? "active") as
     | EscrowStatus
     | string
@@ -270,7 +260,7 @@ export function mapEscrowSummaryToListItem(
     description: stored.description,
     createdAt: summary.createdAt,
     updatedAt: summary.updatedAt,
-    totalAmount,
+    amount,
     balance: stored.balance,
     assetSymbol: snapshot
       ? resolveAssetSymbol(summary, snapshot)
@@ -292,6 +282,7 @@ export function mapEscrowDetailToModel(
 
   return {
     escrow: stored,
+    amount: toNullableEscrowAmount(detail.escrow),
     status: detail.escrow.status,
     financial: null,
     deposits: detail.deposits,

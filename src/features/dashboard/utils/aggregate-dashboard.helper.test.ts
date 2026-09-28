@@ -9,15 +9,19 @@ import {
   parseDashboardAmount,
   toIsoCalendarDate,
 } from "@/features/dashboard/utils/aggregate-dashboard.helper";
+import { formatFullCurrency } from "@/helpers/chart-format.helper";
 
 function summary(
   overrides: Partial<EscrowSummary> &
-    Pick<EscrowSummary, "contractId" | "status" | "type" | "createdAt">,
-): EscrowSummary {
+    Pick<EscrowSummary, "contractId" | "status" | "type" | "createdAt"> & {
+      amount?: string | null;
+    },
+): EscrowSummary & { amount: string | null } {
   return {
     network: "testnet",
     engagementId: "eng-1",
-    totalAmount: "100",
+    totalAmount: "1",
+    amount: "100",
     balance: "40",
     asset: null,
     lastLedgerSeq: "1",
@@ -45,13 +49,15 @@ function summary(
 }
 
 function financial(
-  overrides: Partial<EscrowFinancial> & Pick<EscrowFinancial, "contractId">,
-): EscrowFinancial {
+  overrides: Partial<EscrowFinancial> &
+    Pick<EscrowFinancial, "contractId"> & { amount?: string | null },
+): EscrowFinancial & { amount: string | null } {
   return {
     type: "single-release",
     asset: "USDC",
     platformFee: "1",
-    totalAmount: "100",
+    totalAmount: "1",
+    amount: "100",
     totalDeposited: "100",
     totalReleased: "30",
     pendingRelease: "20",
@@ -115,7 +121,8 @@ describe("aggregateDashboardMetrics", () => {
         type: "multi-release",
         createdAt: `${day}T11:00:00.000Z`,
         balance: "25",
-        totalAmount: "80",
+        amount: "80",
+        totalAmount: "1",
       }),
       summary({
         contractId: "c3",
@@ -178,5 +185,33 @@ describe("aggregateDashboardMetrics", () => {
       "Released",
       "Pending",
     ]);
+  });
+
+  it("uses amount for deal size and ignores the removed totalAmount field", () => {
+    const metrics = aggregateDashboardMetrics({
+      escrows: [
+        summary({
+          contractId: "c1",
+          status: "active",
+          type: "single-release",
+          createdAt: "2026-05-10T10:00:00.000Z",
+          totalAmount: "1",
+          amount: "250.5",
+          balance: "0",
+        }),
+      ],
+      financials: [
+        financial({
+          contractId: "c1",
+          totalDeposited: "0",
+          totalAmount: "999",
+          amount: "40",
+          balance: "0",
+        }),
+      ],
+      now: new Date("2026-05-10T12:00:00.000Z"),
+    });
+
+    expect(metrics.stats[2]?.value).toBe(formatFullCurrency(40));
   });
 });

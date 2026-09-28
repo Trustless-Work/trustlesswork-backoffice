@@ -137,7 +137,7 @@ export type EscrowListItem = {
   readonly description: string;
   readonly createdAt: string;
   readonly updatedAt: string;
-  readonly totalAmount: number | null;
+  readonly amount: number | null;
   readonly balance: number;
   readonly assetSymbol: string;
   readonly milestoneCount: number;
@@ -148,6 +148,7 @@ export type EscrowListItem = {
 
 export type EscrowDetailModel = {
   readonly escrow: StoredEscrow;
+  readonly amount: number | null;
   readonly status: EscrowStatus | string | null;
   readonly financial: EscrowFinancial | null;
   readonly deposits: readonly EscrowDeposit[];

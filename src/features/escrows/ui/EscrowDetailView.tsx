@@ -80,7 +80,7 @@ export const EscrowDetailView = ({
             backLabel={backLabel}
           />
 
-          <EscrowOverviewSection escrow={escrow} />
+          <EscrowOverviewSection escrow={escrow} amount={detail.amount} />
           <EscrowDisputePanel escrow={escrow} />
           <EscrowRolesCard escrow={escrow} />
           <EscrowMilestonesTable escrow={escrow} />

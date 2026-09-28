@@ -47,18 +47,24 @@ const AmountTile = ({
   symbol,
 }: {
   label: string;
-  amount: number;
+  amount: number | null;
   symbol: string;
 }) => (
   <div className="rounded-2xl border-2 border-border px-3 py-2.5">
     <p className="text-xs text-muted-foreground">{label}</p>
-    <UsdcAmount
-      amount={amount}
-      symbol={symbol}
-      size="lg"
-      emphasis
-      className="mt-0.5"
-    />
+    {amount === null ? (
+      <p className="mt-0.5 text-lg font-semibold text-muted-foreground">
+        Pending
+      </p>
+    ) : (
+      <UsdcAmount
+        amount={amount}
+        symbol={symbol}
+        size="lg"
+        emphasis
+        className="mt-0.5"
+      />
+    )}
   </div>
 );
 
@@ -160,7 +166,7 @@ export const PayrollRunsList = ({
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <AmountTile
                   label="Total"
-                  amount={run.totalAmount ?? 0}
+                  amount={run.amount}
                   symbol={run.assetSymbol}
                 />
                 <AmountTile
@@ -201,12 +207,18 @@ export const PayrollRunsList = ({
                   </Link>
                 </TableCell>
                 <TableCell>
-                  <UsdcAmount
-                    amount={run.totalAmount ?? 0}
-                    symbol={run.assetSymbol}
-                    size="sm"
-                    emphasis
-                  />
+                  {run.amount === null ? (
+                    <span className="text-sm font-medium text-muted-foreground">
+                      Pending
+                    </span>
+                  ) : (
+                    <UsdcAmount
+                      amount={run.amount}
+                      symbol={run.assetSymbol}
+                      size="sm"
+                      emphasis
+                    />
+                  )}
                 </TableCell>
                 <TableCell>
                   <UsdcAmount

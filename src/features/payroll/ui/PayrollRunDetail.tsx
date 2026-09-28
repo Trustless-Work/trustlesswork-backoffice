@@ -18,7 +18,6 @@ import {
   isStoredMultiReleaseEscrow,
 } from "@/features/escrows/types/escrow.types";
 import { EscrowDepositsCard } from "@/features/escrows/ui/detail/EscrowDepositsCard";
-import { getEscrowDisplayAmount } from "@/features/escrows/utils/escrow-display.helper";
 import type { PayrollPaymentTab } from "@/features/payroll/constants/payment-tabs";
 import { usePayrollRunDetail } from "@/features/payroll/hooks/usePayrollRuns";
 import { PayrollExplorerLinks } from "@/features/payroll/ui/PayrollExplorerLinks";
@@ -150,7 +149,7 @@ export const PayrollRunDetail = ({ contractId }: PayrollRunDetailProps) => {
   const periodLabel = period
     ? formatPayrollPeriodLabel(period)
     : escrow.title;
-  const total = getEscrowDisplayAmount(escrow);
+  const total = detail?.amount ?? null;
   const isFunded = escrow.balance > 0;
   const payrollRows = isStoredMultiReleaseEscrow(escrow)
     ? mapMilestonesToPayrollRows(escrow.milestones)
@@ -205,13 +204,17 @@ export const PayrollRunDetail = ({ contractId }: PayrollRunDetailProps) => {
             </div>
 
             <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-6 lg:grid-cols-4">
-              <UsdcAmountStat
-                label="Total"
-                amount={total}
-                symbol="USDC"
-                size="2xl"
-                emphasis
-              />
+              {total === null ? (
+                <OverviewStat label="Total" value="Pending" />
+              ) : (
+                <UsdcAmountStat
+                  label="Total"
+                  amount={total}
+                  symbol="USDC"
+                  size="2xl"
+                  emphasis
+                />
+              )}
               <UsdcAmountStat
                 label="Balance"
                 amount={escrow.balance}

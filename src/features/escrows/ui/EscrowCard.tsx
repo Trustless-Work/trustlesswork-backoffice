@@ -13,7 +13,6 @@ import {
 import { MilestoneFlagsBadges } from "@/features/escrows/ui/MilestoneFlagsBadges";
 import {
   getEscrowAssetSymbol,
-  getEscrowDisplayAmount,
   isEscrowDisputed,
   isEscrowReleased,
 } from "@/features/escrows/utils/escrow-display.helper";
@@ -42,7 +41,7 @@ function getEscrowCardStatus(item: EscrowListItem): EscrowCardStatus {
 export const EscrowCard = ({ item }: EscrowCardProps) => {
   const escrow = item.stored;
   const status = getEscrowCardStatus(item);
-  const amount = item.totalAmount ?? getEscrowDisplayAmount(escrow);
+  const amount = item.amount;
   const currency = item.assetSymbol || getEscrowAssetSymbol(escrow);
   const isMulti = isStoredMultiReleaseEscrow(escrow);
   const milestones = escrow.milestones;
@@ -80,13 +79,19 @@ export const EscrowCard = ({ item }: EscrowCardProps) => {
         <div className="mt-4 grid grid-cols-2 gap-3">
           <div className="rounded-2xl border-2 px-3 py-2.5">
             <p className="text-xs text-muted-foreground">Amount</p>
-            <UsdcAmount
-              amount={amount}
-              symbol={currency}
-              size="lg"
-              emphasis
-              className="mt-0.5"
-            />
+            {amount === null ? (
+              <p className="mt-0.5 text-lg font-semibold text-muted-foreground">
+                Pending
+              </p>
+            ) : (
+              <UsdcAmount
+                amount={amount}
+                symbol={currency}
+                size="lg"
+                emphasis
+                className="mt-0.5"
+              />
+            )}
           </div>
           <div className="rounded-2xl border-2 px-3 py-2.5">
             <p className="text-xs text-muted-foreground">Balance</p>

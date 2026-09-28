@@ -5,7 +5,9 @@ import {
   mapEscrowSummaryToStored,
 } from "@/features/escrows/utils/escrow-rest-map.helper";
 
-function buildEscrowSummary(overrides?: Partial<EscrowSummary>): EscrowSummary {
+function buildEscrowSummary(
+  overrides?: Partial<EscrowSummary> & { amount?: string | null },
+): EscrowSummary & { amount: string | null } {
   return {
     network: "testnet",
     contractId: "CDCONTRACT",
@@ -13,6 +15,7 @@ function buildEscrowSummary(overrides?: Partial<EscrowSummary>): EscrowSummary {
     engagementId: "ENG-1",
     status: "active",
     totalAmount: null,
+    amount: "250.5",
     balance: "250.5",
     asset: {
       name: "USDC",
@@ -78,6 +81,7 @@ describe("mapEscrowSummaryToListItem", () => {
       title: "Payroll",
       engagementId: "ENG-1",
       balance: 250.5,
+      amount: 250.5,
       assetSymbol: "USDC",
       layout: "standard",
       financial: null,
@@ -111,6 +115,22 @@ describe("mapEscrowSummaryToListItem", () => {
     );
 
     expect(item?.assetSymbol).toBe("EURC");
+  });
+
+  it("keeps amount null when the read-model has not projected it", () => {
+    const item = mapEscrowSummaryToListItem(
+      buildEscrowSummary({ amount: null, totalAmount: "999" }),
+    );
+
+    expect(item?.amount).toBeNull();
+  });
+
+  it("ignores the removed totalAmount field", () => {
+    const item = mapEscrowSummaryToListItem(
+      buildEscrowSummary({ amount: "80", totalAmount: "1" }),
+    );
+
+    expect(item?.amount).toBe(80);
   });
 
   it("returns null when snapshot is invalid", () => {
