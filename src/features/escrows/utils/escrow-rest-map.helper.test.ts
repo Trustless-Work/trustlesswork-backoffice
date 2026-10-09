@@ -59,10 +59,19 @@ describe("mapEscrowSummaryToStored", () => {
       amount: 1000,
       balance: 250.5,
       status: "active",
+      apiVersion: null,
       roles: expect.objectContaining({
         observers: ["G8"],
       }),
     });
+  });
+
+  it("keeps apiVersion from the read model", () => {
+    const stored = mapEscrowSummaryToStored(
+      Object.assign(buildEscrowSummary(), { apiVersion: "v1" }),
+    );
+
+    expect(stored?.apiVersion).toBe("v1");
   });
 
   it("allows explicit balance override", () => {

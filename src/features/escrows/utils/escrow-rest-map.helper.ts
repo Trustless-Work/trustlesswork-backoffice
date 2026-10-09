@@ -102,6 +102,20 @@ type SummaryLike = {
   snapshot: unknown;
 };
 
+function readApiVersion(summary: object): string | null {
+  if (!("apiVersion" in summary)) {
+    return null;
+  }
+
+  const value = summary.apiVersion;
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const trimmed = value.trim();
+  return trimmed === "" ? null : trimmed;
+}
+
 function resolveAssetSymbol(
   summary: SummaryLike,
   snapshot: EscrowSnapshot,
@@ -159,6 +173,7 @@ function mapSingleStored(
     createdAt: summary.createdAt,
     updatedAt: summary.updatedAt,
     status: summary.status,
+    apiVersion: readApiVersion(summary),
   };
 }
 
@@ -188,6 +203,7 @@ function mapMultiStored(
     createdAt: summary.createdAt,
     updatedAt: summary.updatedAt,
     status: summary.status,
+    apiVersion: readApiVersion(summary),
   };
 }
 

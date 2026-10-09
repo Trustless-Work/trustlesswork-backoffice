@@ -23,21 +23,29 @@ import {
 import { Input } from "@/components/ui/input";
 import { useCreateApiKey } from "@/features/api-keys/hooks/useCreateApiKey";
 import { useCreateApiKeyForm } from "@/features/api-keys/hooks/useCreateApiKeyForm";
+import { ApiKeysNetworkTabs } from "@/features/api-keys/ui/ApiKeysNetworkTabs";
+import { getApiKeyNetworkLabel } from "@/features/api-keys/utils/api-key-network.helper";
 import { useActiveOrganization } from "@/providers/OrganizationProvider";
+import type { NetworkType } from "@/types/network.entity";
 
 type CreateApiKeyDialogProps = {
+  network: NetworkType;
+  onNetworkChange: (network: NetworkType) => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreated: (apiKey: string) => void;
 };
 
 export const CreateApiKeyDialog = ({
+  network,
+  onNetworkChange,
   open,
   onOpenChange,
   onCreated,
 }: CreateApiKeyDialogProps) => {
   const { activeOrganization, activeOrganizationId } = useActiveOrganization();
   const canCreate = Boolean(activeOrganizationId);
+  const networkLabel = getApiKeyNetworkLabel(network);
 
   const { mutateAsync, isPending } = useCreateApiKey({
     onCreated: (apiKey) => {
@@ -50,7 +58,7 @@ export const CreateApiKeyDialog = ({
     platformId: activeOrganizationId ?? "",
     isSubmitting: isPending,
     onSubmit: async (values) => {
-      await mutateAsync(values);
+      await mutateAsync({ input: values, network });
     },
   });
 
@@ -66,13 +74,17 @@ export const CreateApiKeyDialog = ({
         <DialogHeader>
           <DialogTitle>Create API key</DialogTitle>
           <DialogDescription>
-            Get access to the Trustless Work API to integrate escrow
-            functionality into your application.
+            This key is issued for {networkLabel} and only authenticates
+            against that network. The header switch does not change it.
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={onSubmit} className="flex flex-col gap-4">
+            <ApiKeysNetworkTabs
+              network={network}
+              onNetworkChange={onNetworkChange}
+            />
             {!canCreate ? (
               <p className="text-sm text-muted-foreground">
                 Select or create an organization in the team switcher before
@@ -99,8 +111,8 @@ export const CreateApiKeyDialog = ({
                       The key will be scoped to{" "}
                       <span className="font-medium text-foreground">
                         {activeOrganization.name}
-                      </span>
-                      .
+                      </span>{" "}
+                      on {networkLabel}.
                     </FormDescription>
                   ) : null}
                   <FormMessage />
@@ -124,7 +136,7 @@ export const CreateApiKeyDialog = ({
                     Creating...
                   </>
                 ) : (
-                  "Create key"
+                  `Create ${networkLabel} key`
                 )}
               </Button>
             </DialogFooter>

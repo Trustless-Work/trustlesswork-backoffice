@@ -129,6 +129,7 @@ export const EscrowDetailSkeleton = ({
         <Skeleton className="h-9 w-36 rounded-full" />
         <div className="flex gap-2">
           <Skeleton className="h-7 w-28 rounded-full" />
+          <Skeleton className="h-7 w-16 rounded-full" />
           <Skeleton className="h-7 w-20 rounded-full" />
         </div>
       </div>

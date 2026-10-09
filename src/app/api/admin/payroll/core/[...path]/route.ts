@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { getAdminSession } from "@/features/admin-auth/services/admin-session.guard";
 import { createAdminForbiddenResponse } from "@/lib/admin-session-response";
 import { proxyCoreResponse, validateSameOrigin } from "@/lib/bff-utils";
+import { parseRequestNetwork } from "@/helpers/request-network.helper";
 import { payrollFetch } from "@/lib/payroll-fetch";
 
 type RouteContext = {
@@ -72,6 +73,9 @@ async function handlePayrollCoreProxy(
     }
   }
 
-  const response = await payrollFetch(`${corePath}${search}`, init);
+  const response = await payrollFetch(`${corePath}${search}`, {
+    ...init,
+    network: parseRequestNetwork(request),
+  });
   return proxyCoreResponse(response);
 }

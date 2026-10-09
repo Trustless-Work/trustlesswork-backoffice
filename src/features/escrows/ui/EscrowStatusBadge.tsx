@@ -93,6 +93,31 @@ export const EscrowCardStatusBadge = ({
   );
 };
 
+type EscrowApiVersionBadgeProps = {
+  apiVersion: string | null | undefined;
+  className?: string;
+};
+
+export const EscrowApiVersionBadge = ({
+  apiVersion,
+  className,
+}: EscrowApiVersionBadgeProps) => {
+  const version = apiVersion?.trim();
+  if (!version) {
+    return null;
+  }
+
+  return (
+    <Badge
+      variant="outline"
+      title="API version"
+      className={cn("font-mono font-normal uppercase", className)}
+    >
+      API {version}
+    </Badge>
+  );
+};
+
 type EscrowTypeBadgeProps = {
   escrow: StoredEscrow;
   className?: string;

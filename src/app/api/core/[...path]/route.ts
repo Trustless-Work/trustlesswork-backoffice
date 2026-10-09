@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { coreFetch } from "@/lib/core-fetch";
 import { proxyCoreResponse, validateSameOrigin } from "@/lib/bff-utils";
+import { parseRequestNetwork } from "@/helpers/request-network.helper";
 
 type RouteContext = {
   params: Promise<{ path: string[] }>;
@@ -62,6 +63,9 @@ async function handleCoreProxy(request: NextRequest, context: RouteContext) {
     }
   }
 
-  const response = await coreFetch(`${corePath}${search}`, init);
+  const response = await coreFetch(`${corePath}${search}`, {
+    ...init,
+    network: parseRequestNetwork(request),
+  });
   return proxyCoreResponse(response);
 }

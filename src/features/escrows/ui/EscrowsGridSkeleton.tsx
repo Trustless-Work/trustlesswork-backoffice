@@ -24,6 +24,10 @@ export const EscrowsGridSkeleton = () => (
           <Skeleton className="h-16 w-full rounded-2xl" />
           <Skeleton className="h-16 w-full rounded-2xl" />
         </div>
+        <div className="flex items-center justify-between gap-2 border-t border-border pt-4">
+          <Skeleton className="h-3 w-28" />
+          <Skeleton className="h-5 w-14 rounded-full" />
+        </div>
       </div>
     ))}
   </div>

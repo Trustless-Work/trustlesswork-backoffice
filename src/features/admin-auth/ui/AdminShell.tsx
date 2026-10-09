@@ -16,7 +16,7 @@ type AdminShellProps = {
  * Protected /admin chrome — structural twin of the dashboard layout.
  *
  * Same `SidebarProvider` / `Lights` / `SidebarInset` / page-header stack.
- * Includes network switching (mainnet locked until enabled globally).
+ * Includes network switching between testnet and mainnet.
  */
 export const AdminShell = ({ email, children }: AdminShellProps) => {
   return (

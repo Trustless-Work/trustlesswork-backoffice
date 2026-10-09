@@ -7,30 +7,36 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { useApiKeys } from "@/features/api-keys/hooks/useApiKeys";
 import { useRevokeApiKey } from "@/features/api-keys/hooks/useRevokeApiKey";
 import { useRotateApiKey } from "@/features/api-keys/hooks/useRotateApiKey";
 import { isApiKeyActive } from "@/features/api-keys/types/api-key.types";
 import { ApiKeysList } from "@/features/api-keys/ui/ApiKeysList";
 import { ApiKeysListSkeleton } from "@/features/api-keys/ui/ApiKeysSkeleton";
+import { ApiKeysSectionHeader } from "@/features/api-keys/ui/ApiKeysSectionHeader";
 import { RevokeApiKeyDialog } from "@/features/api-keys/ui/RevokeApiKeyDialog";
+import { getApiKeyNetworkLabel } from "@/features/api-keys/utils/api-key-network.helper";
 import { parseApiError } from "@/lib/api-error";
+import type { NetworkType } from "@/types/network.entity";
 
 type ApiKeysSectionProps = {
+  network: NetworkType;
+  queryEnabled: boolean;
+  onNetworkChange: (network: NetworkType) => void;
   onCreateRequest: () => void;
   onSecretRevealed: (apiKey: string) => void;
 };
 
 export const ApiKeysSection = ({
+  network,
+  queryEnabled,
+  onNetworkChange,
   onCreateRequest,
   onSecretRevealed,
 }: ApiKeysSectionProps) => {
+  const networkLabel = getApiKeyNetworkLabel(network);
   const {
     apiKeys,
     isLoading,
@@ -40,17 +46,17 @@ export const ApiKeysSection = ({
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = useApiKeys();
+  } = useApiKeys(network, queryEnabled);
   const [showRevoked, setShowRevoked] = useState(false);
   const {
     mutate: rotateApiKey,
     isPending: isRotating,
-    variables: rotatingKeyId,
+    variables: rotatingKey,
   } = useRotateApiKey({ onRotated: onSecretRevealed });
   const {
     mutate: revokeApiKey,
     isPending: isRevoking,
-    variables: revokingKeyId,
+    variables: revokingKey,
   } = useRevokeApiKey();
   const [revokeTarget, setRevokeTarget] = useState<string | null>(null);
 
@@ -67,39 +73,31 @@ export const ApiKeysSection = ({
       return;
     }
 
-    revokeApiKey(revokeTarget, {
-      onSettled: () => setRevokeTarget(null),
-    });
+    revokeApiKey(
+      { keyId: revokeTarget, network },
+      {
+        onSettled: () => setRevokeTarget(null),
+      },
+    );
   };
+
+  const showLoading = !queryEnabled || isLoading;
 
   return (
     <>
       <Card className="w-full">
         <CardHeader>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="space-y-1">
-              <CardTitle>API Keys</CardTitle>
-              <CardDescription>
-                Machine credentials for your platforms. Keys are scoped to one
-                organization and always use the ESCROW_MANAGER role.
-              </CardDescription>
-            </div>
-            <div className="flex items-center gap-2">
-              <Switch
-                id="show-revoked-keys"
-                checked={showRevoked}
-                onCheckedChange={setShowRevoked}
-              />
-              <Label htmlFor="show-revoked-keys" className="text-sm">
-                Show revoked
-              </Label>
-            </div>
-          </div>
+          <ApiKeysSectionHeader
+            network={network}
+            showRevoked={showRevoked}
+            onShowRevokedChange={setShowRevoked}
+            onNetworkChange={onNetworkChange}
+          />
         </CardHeader>
         <CardContent>
-          {isLoading ? <ApiKeysListSkeleton /> : null}
+          {showLoading ? <ApiKeysListSkeleton /> : null}
 
-          {!isLoading && errorDetail ? (
+          {!showLoading && errorDetail ? (
             <div className="flex flex-col gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4">
               <p className="text-sm text-destructive">{errorDetail}</p>
               <Button
@@ -116,28 +114,36 @@ export const ApiKeysSection = ({
             </div>
           ) : null}
 
-          {!isLoading && !errorDetail && visibleApiKeys.length === 0 ? (
+          {!showLoading && !errorDetail && visibleApiKeys.length === 0 ? (
             <NoData
               icon={KeyRoundIcon}
-              title={showRevoked ? "No API keys yet" : "No active API keys"}
+              title={
+                showRevoked
+                  ? `No ${networkLabel} API keys yet`
+                  : `No active ${networkLabel} API keys`
+              }
               description={
                 showRevoked
-                  ? "Create a key to authenticate your backend with Trustless Work."
-                  : "Create a key or enable revoked keys to review past credentials."
+                  ? `Create a ${networkLabel} key to authenticate your backend with Trustless Work.`
+                  : `Create a ${networkLabel} key or enable revoked keys to review past credentials.`
               }
               actionLabel="Create API key"
               onAction={onCreateRequest}
             />
           ) : null}
 
-          {!isLoading && !errorDetail && visibleApiKeys.length > 0 ? (
+          {!showLoading && !errorDetail && visibleApiKeys.length > 0 ? (
             <div className="flex flex-col gap-4">
               <ApiKeysList
                 apiKeys={visibleApiKeys}
-                onRotate={(keyId) => rotateApiKey(keyId)}
+                onRotate={(keyId) => rotateApiKey({ keyId, network })}
                 onRevoke={setRevokeTarget}
-                rotatingKeyId={isRotating ? (rotatingKeyId ?? null) : null}
-                revokingKeyId={isRevoking ? (revokingKeyId ?? null) : null}
+                rotatingKeyId={
+                  isRotating ? (rotatingKey?.keyId ?? null) : null
+                }
+                revokingKeyId={
+                  isRevoking ? (revokingKey?.keyId ?? null) : null
+                }
               />
               {hasNextPage ? (
                 <Button

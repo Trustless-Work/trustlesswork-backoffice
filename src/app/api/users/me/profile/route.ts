@@ -6,6 +6,7 @@ import {
   proxyCoreResponse,
   validateSameOrigin,
 } from "@/lib/bff-utils";
+import { parseRequestNetwork } from "@/helpers/request-network.helper";
 import type { UpdateProfileInput } from "@/features/settings/schemas/profile.schema";
 import type { UserResponse } from "@/types";
 
@@ -15,7 +16,8 @@ export async function PATCH(request: NextRequest) {
     return csrfError;
   }
 
-  const meResponse = await coreFetch("/users/me");
+  const network = parseRequestNetwork(request);
+  const meResponse = await coreFetch("/users/me", { network });
   if (!meResponse.ok) {
     return proxyCoreResponse(meResponse);
   }
@@ -55,6 +57,7 @@ export async function PATCH(request: NextRequest) {
   const profileResponse = await adminFetch(`/admin/users/${me.id}`, {
     method: "PATCH",
     body: JSON.stringify(profilePayload),
+    network,
   });
 
   return proxyCoreResponse(profileResponse);

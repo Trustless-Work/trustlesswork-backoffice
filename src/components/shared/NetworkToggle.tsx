@@ -2,19 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useMounted } from "@/hooks/useMounted";
-import { AlertTriangle, Loader2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogMedia,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { MainnetBetaWarningDialog } from "@/components/shared/MainnetBetaWarningDialog";
 import {
   Tooltip,
   TooltipContent,
@@ -24,8 +13,7 @@ import { cn } from "@/lib/utils";
 import useNetwork from "@/hooks/useNetwork";
 import type { NetworkType } from "@/types/network.entity";
 
-/** Flip to `true` (and unlock in client-storage) when mainnet switching returns. */
-const NETWORK_SWITCHING_ENABLED = false;
+const NETWORK_SWITCHING_ENABLED = true;
 
 const TOGGLE_CLASSNAME =
   "flex h-10 shrink-0 items-center gap-1.5 rounded-4xl border border-border bg-background px-3";
@@ -139,40 +127,12 @@ export const NetworkToggle = ({ className }: NetworkToggleProps) => {
       )}
 
       {NETWORK_SWITCHING_ENABLED ? (
-        <AlertDialog
+        <MainnetBetaWarningDialog
           open={showMainnetDialog}
+          isSwitching={isReseting}
           onOpenChange={handleDialogOpenChange}
-        >
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogMedia>
-                <AlertTriangle className="text-amber-500" />
-              </AlertDialogMedia>
-              <AlertDialogTitle>Switch to Mainnet?</AlertDialogTitle>
-              <AlertDialogDescription>
-                You are about to switch to the Stellar mainnet. Transactions use
-                real funds and are irreversible. Make sure your wallet is
-                connected to the correct network before continuing.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel disabled={isReseting}>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleConfirmMainnet}
-                disabled={isReseting}
-              >
-                {isReseting ? (
-                  <>
-                    <Loader2 className="size-4 animate-spin" />
-                    Switching...
-                  </>
-                ) : (
-                  "Switch to Mainnet"
-                )}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+          onConfirm={handleConfirmMainnet}
+        />
       ) : null}
     </>
   );

@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { unsealData } from "iron-session";
 import {
   getSessionPasswordForEdge,
-  isSessionExpired,
+  hasUsableSession,
   SESSION_COOKIE_NAME,
   type SessionData,
 } from "@/lib/session";
@@ -42,16 +42,12 @@ async function handleDashboardRequest(
       password: getSessionPasswordForEdge(),
     });
 
-    if (!session.token) {
+    if (!hasUsableSession(session)) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", request.nextUrl.pathname);
-      return NextResponse.redirect(loginUrl);
-    }
-
-    if (isSessionExpired(session.expiresAt)) {
-      const loginUrl = new URL("/login", request.url);
-      loginUrl.searchParams.set("reason", "session_expired");
-      loginUrl.searchParams.set("redirect", request.nextUrl.pathname);
+      if (session.token || session.byNetwork) {
+        loginUrl.searchParams.set("reason", "session_expired");
+      }
       const response = NextResponse.redirect(loginUrl);
       response.cookies.delete(SESSION_COOKIE_NAME);
       return response;

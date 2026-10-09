@@ -10,18 +10,23 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { getApiKeyNetworkLabel } from "@/features/api-keys/utils/api-key-network.helper";
 import { useCopy } from "@/hooks/useCopy";
+import type { NetworkType } from "@/types/network.entity";
 
 type GeneratedApiKeyDialogProps = {
+  network: NetworkType;
   apiKey: string | null;
   onOpenChange: (open: boolean) => void;
 };
 
 export const GeneratedApiKeyDialog = ({
+  network,
   apiKey,
   onOpenChange,
 }: GeneratedApiKeyDialogProps) => {
   const { copiedKeyId, copyToClipboard } = useCopy();
+  const networkLabel = getApiKeyNetworkLabel(network);
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
@@ -35,7 +40,8 @@ export const GeneratedApiKeyDialog = ({
         <DialogHeader>
           <DialogTitle>Save your API key</DialogTitle>
           <DialogDescription>
-            Copy this key now. For security, it will not be shown again.
+            Copy this {networkLabel} key now. For security, it will not be
+            shown again.
           </DialogDescription>
         </DialogHeader>
 

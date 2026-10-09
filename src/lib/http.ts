@@ -4,6 +4,7 @@ import {
   isAdminAuthArea,
   isIntentionalLogout,
 } from "@/features/auth/lib/logout-client";
+import { resolveClientNetworkHeader } from "@/lib/client-network";
 import { getStoredNetwork } from "@/lib/client-storage";
 import {
   parseApiError,
@@ -24,7 +25,13 @@ const http = axios.create({
 
 http.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   if (typeof window !== "undefined") {
-    config.headers.set("x-network", getStoredNetwork());
+    config.headers.set(
+      "x-network",
+      resolveClientNetworkHeader(
+        config.headers.get("x-network"),
+        getStoredNetwork(),
+      ),
+    );
   }
   return config;
 });

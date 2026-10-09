@@ -7,6 +7,7 @@ import { UsdcAmount } from "@/components/shared/UsdcAmount";
 import type { EscrowListItem } from "@/features/escrows/types/escrow.types";
 import { isStoredMultiReleaseEscrow } from "@/features/escrows/types/escrow.types";
 import {
+  EscrowApiVersionBadge,
   EscrowCardStatusBadge,
   EscrowTypeBadge,
 } from "@/features/escrows/ui/EscrowStatusBadge";
@@ -59,7 +60,7 @@ export const EscrowCard = ({ item }: EscrowCardProps) => {
             <div className="mb-3 flex flex-wrap items-center gap-2">
               <EscrowTypeBadge escrow={escrow} />
               <Badge
-                variant="secondary"
+                variant="outline"
                 className="font-mono font-normal uppercase"
               >
                 {truncateStellarAddress(item.contractId, 8, 6)}
@@ -169,6 +170,7 @@ export const EscrowCard = ({ item }: EscrowCardProps) => {
           >
             {formatIsoDateTimeCompact(item.createdAt)}
           </time>
+          <EscrowApiVersionBadge apiVersion={escrow.apiVersion} />
         </footer>
       </article>
     </Link>

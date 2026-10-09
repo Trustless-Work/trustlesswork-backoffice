@@ -53,6 +53,7 @@ export type StoredEscrowMetadata = {
   readonly createdAt: string;
   readonly updatedAt: string;
   readonly status?: EscrowStatus | string | null;
+  readonly apiVersion?: string | null;
 };
 
 export type StoredSingleReleaseEscrow = SingleReleaseEscrow &

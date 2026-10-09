@@ -5,17 +5,26 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { apiKeyService } from "@/features/api-keys/services/api-key.service";
 import { flattenKeysetPages } from "@/lib/pagination";
 import { DEFAULT_KEYSET_LIMIT } from "@/types/pagination.entity";
+import type { NetworkType } from "@/types/network.entity";
 
 export const API_KEYS_QUERY_KEY = ["user", "api-keys"] as const;
 
-export function useApiKeys() {
+export function apiKeysQueryKey(network: NetworkType) {
+  return [...API_KEYS_QUERY_KEY, network] as const;
+}
+
+export function useApiKeys(network: NetworkType, enabled = true) {
   const query = useInfiniteQuery({
-    queryKey: API_KEYS_QUERY_KEY,
+    queryKey: apiKeysQueryKey(network),
+    enabled,
     queryFn: ({ pageParam }) =>
-      apiKeyService.listApiKeysPage({
-        limit: DEFAULT_KEYSET_LIMIT,
-        cursor: pageParam,
-      }),
+      apiKeyService.listApiKeysPage(
+        {
+          limit: DEFAULT_KEYSET_LIMIT,
+          cursor: pageParam,
+        },
+        network,
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) =>
       lastPage.hasMore ? (lastPage.nextCursor ?? undefined) : undefined,

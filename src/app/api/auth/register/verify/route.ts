@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { adminFetch } from "@/lib/admin-fetch";
 import { parseJsonBody, proxyCoreResponse } from "@/lib/bff-utils";
+import { parseRequestNetwork } from "@/helpers/request-network.helper";
 import type { RegisterVerifyRequest } from "@/features/auth/types/auth.types";
 
 export async function POST(request: NextRequest) {
@@ -8,6 +9,7 @@ export async function POST(request: NextRequest) {
 
   const response = await adminFetch("/auth/register/verify", {
     method: "POST",
+    network: parseRequestNetwork(request),
     body: JSON.stringify({
       address: body.address,
       signedXdr: body.signedXdr,

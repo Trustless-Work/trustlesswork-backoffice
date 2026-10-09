@@ -24,6 +24,7 @@ type RoundedTabsProps = {
   onValueChange?: (value: string) => void;
   className?: string;
   fullWidth?: boolean;
+  ariaLabel?: string;
 };
 
 type RoundedTabLinksProps = {
@@ -80,6 +81,7 @@ export function RoundedTabs({
   onValueChange,
   className,
   fullWidth = false,
+  ariaLabel = "Tabs",
 }: RoundedTabsProps) {
   const groupId = useId();
   const [internal, setInternal] = useState(defaultValue ?? items[0]?.value);
@@ -95,7 +97,7 @@ export function RoundedTabs({
     <div
       ref={listRef}
       role="tablist"
-      aria-label="Tabs"
+      aria-label={ariaLabel}
       className={cn(
         "relative flex items-center gap-1 rounded-full border border-border bg-muted/60 p-1",
         fullWidth ? "w-full lg:w-auto" : "w-fit",

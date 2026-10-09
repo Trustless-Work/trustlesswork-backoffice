@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import type { StoredEscrow } from "@/features/escrows/types/escrow.types";
 import {
+  EscrowApiVersionBadge,
   EscrowStatusBadge,
   EscrowTypeBadge,
 } from "@/features/escrows/ui/EscrowStatusBadge";
@@ -29,6 +30,7 @@ export const EscrowDetailHeader = ({
 
       <div className="flex items-center gap-2">
         <EscrowTypeBadge escrow={escrow} />
+        <EscrowApiVersionBadge apiVersion={escrow.apiVersion} />
         <EscrowStatusBadge escrow={escrow} />
       </div>
     </header>

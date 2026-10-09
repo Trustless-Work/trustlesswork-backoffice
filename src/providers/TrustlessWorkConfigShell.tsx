@@ -3,6 +3,7 @@
 import { TrustlessWorkConfig } from "@trustless-work/escrow";
 import type { ComponentProps, ReactNode } from "react";
 import { useMemo } from "react";
+import useNetwork from "@/hooks/useNetwork";
 
 type TrustlessWorkConfigShellProps = {
   platformId?: string | null;
@@ -22,13 +23,18 @@ export const TrustlessWorkConfigShell = ({
   baseURL = DEFAULT_CORE_BFF_BASE_URL,
   children,
 }: TrustlessWorkConfigShellProps) => {
+  const { currentNetwork } = useNetwork();
   const defaultHeaders = useMemo(() => {
-    if (!platformId) {
-      return undefined;
+    const headers: Record<string, string> = {
+      "x-network": currentNetwork,
+    };
+
+    if (platformId) {
+      headers["X-TW-Platform"] = platformId;
     }
 
-    return { "X-TW-Platform": platformId };
-  }, [platformId]);
+    return headers;
+  }, [currentNetwork, platformId]);
 
   return (
     <TrustlessWorkConfig baseURL={baseURL} defaultHeaders={defaultHeaders}>

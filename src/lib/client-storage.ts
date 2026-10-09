@@ -17,14 +17,7 @@ export function getClientStorage(): Storage {
   return window.localStorage;
 }
 
-/** Flip with `NETWORK_SWITCHING_ENABLED` in `NetworkToggle` when mainnet returns. */
-const NETWORK_LOCKED_TO_TESTNET = true;
-
 export function getStoredNetwork(): NetworkType {
-  if (NETWORK_LOCKED_TO_TESTNET) {
-    return "testnet";
-  }
-
   const stored = getClientStorage().getItem("network");
   return stored === "mainnet" ? "mainnet" : "testnet";
 }

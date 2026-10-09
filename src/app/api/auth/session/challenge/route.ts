@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminFetch } from "@/lib/admin-fetch";
 import { parseJsonBody } from "@/lib/bff-utils";
+import { parseRequestNetwork } from "@/helpers/request-network.helper";
 import type { ProblemDetails } from "@/lib/api-error";
 import type {
   AuthChallengeRequest,
@@ -33,6 +34,7 @@ export async function POST(request: NextRequest) {
   const response = await adminFetch("/auth/session/challenge", {
     method: "POST",
     body: JSON.stringify(body),
+    network: parseRequestNetwork(request),
   });
 
   if (response.ok) {

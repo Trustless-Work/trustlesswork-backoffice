@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { authService } from "@/features/auth/services/auth.service";
+import useNetwork from "@/hooks/useNetwork";
 import type { UserResponse } from "@/types";
 import {
   clearClientAuthState,
@@ -20,8 +21,9 @@ function hasStoredWalletAddress(): boolean {
 }
 
 export function useSession() {
+  const { currentNetwork } = useNetwork();
   const query = useQuery<UserResponse | null>({
-    queryKey: ["session", "me"],
+    queryKey: ["session", "me", currentNetwork],
     queryFn: () => authService.getSessionUser(),
     retry: false,
     staleTime: 1000 * 60 * 5,
