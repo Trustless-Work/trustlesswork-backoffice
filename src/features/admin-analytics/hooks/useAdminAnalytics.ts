@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { getStoredNetwork } from "@/lib/client-storage";
 import type { AnalyticsRange } from "@/features/admin-analytics/constants/analytics-range";
 import { rangeQueryKey } from "@/features/admin-analytics/constants/analytics-range";
-import { useAnalyticsContractVersion } from "@/features/admin-analytics/providers/AnalyticsContractVersionProvider";
 import {
   adminAnalyticsService,
 } from "@/features/admin-analytics/services/admin-analytics.service";
@@ -32,16 +31,13 @@ function networkQueryKey(): string {
 }
 
 export function useEscrowGrowth(range: AnalyticsRange) {
-  const contractVersion = useAnalyticsContractVersion();
   const query = useQuery({
     queryKey: adminAnalyticsQueryKey(
       "escrows-monthly",
       networkQueryKey(),
       rangeQueryKey(range),
-      contractVersion,
     ),
-    queryFn: () =>
-      adminAnalyticsService.getEscrowGrowth(range, contractVersion),
+    queryFn: () => adminAnalyticsService.getEscrowGrowth(range),
     ...sharedQueryOptions,
   });
 
@@ -73,16 +69,13 @@ export function useUserGrowth(range: AnalyticsRange) {
 }
 
 export function useRevenueByToken(range: AnalyticsRange) {
-  const contractVersion = useAnalyticsContractVersion();
   const query = useQuery({
     queryKey: adminAnalyticsQueryKey(
       "revenue-monthly",
       networkQueryKey(),
       rangeQueryKey(range),
-      contractVersion,
     ),
-    queryFn: () =>
-      adminAnalyticsService.getRevenueByToken(range, contractVersion),
+    queryFn: () => adminAnalyticsService.getRevenueByToken(range),
     ...sharedQueryOptions,
   });
 
@@ -98,13 +91,11 @@ export function useRevenueEvents(
   range: AnalyticsRange,
   query: RevenueEventsQuery,
 ) {
-  const contractVersion = useAnalyticsContractVersion();
   const eventsQuery = useQuery({
     queryKey: adminAnalyticsQueryKey(
       "revenue-events",
       networkQueryKey(),
       rangeQueryKey(range),
-      contractVersion,
       query.limit,
       query.offset,
       query.eventType ?? "all",
@@ -113,8 +104,7 @@ export function useRevenueEvents(
       query.search ?? "",
       query.asset ?? "all",
     ),
-    queryFn: () =>
-      adminAnalyticsService.getRevenueEvents(range, query, contractVersion),
+    queryFn: () => adminAnalyticsService.getRevenueEvents(range, query),
     ...sharedQueryOptions,
   });
 
@@ -127,16 +117,13 @@ export function useRevenueEvents(
 }
 
 export function useStatusFunnel(range: AnalyticsRange) {
-  const contractVersion = useAnalyticsContractVersion();
   const query = useQuery({
     queryKey: adminAnalyticsQueryKey(
       "escrows-status",
       networkQueryKey(),
       rangeQueryKey(range),
-      contractVersion,
     ),
-    queryFn: () =>
-      adminAnalyticsService.getStatusFunnel(range, contractVersion),
+    queryFn: () => adminAnalyticsService.getStatusFunnel(range),
     ...sharedQueryOptions,
   });
 
@@ -153,18 +140,15 @@ export function useEscrowsTop(
   by: EscrowsTopBy,
   limit = 10,
 ) {
-  const contractVersion = useAnalyticsContractVersion();
   const query = useQuery({
     queryKey: adminAnalyticsQueryKey(
       "escrows-top",
       networkQueryKey(),
       rangeQueryKey(range),
-      contractVersion,
       by,
       limit,
     ),
-    queryFn: () =>
-      adminAnalyticsService.getEscrowsTop(range, by, limit, contractVersion),
+    queryFn: () => adminAnalyticsService.getEscrowsTop(range, by, limit),
     ...sharedQueryOptions,
   });
 
@@ -177,16 +161,13 @@ export function useEscrowsTop(
 }
 
 export function useEscrowConversion(range: AnalyticsRange) {
-  const contractVersion = useAnalyticsContractVersion();
   const query = useQuery({
     queryKey: adminAnalyticsQueryKey(
       "escrows-conversion",
       networkQueryKey(),
       rangeQueryKey(range),
-      contractVersion,
     ),
-    queryFn: () =>
-      adminAnalyticsService.getEscrowConversion(range, contractVersion),
+    queryFn: () => adminAnalyticsService.getEscrowConversion(range),
     ...sharedQueryOptions,
   });
 
@@ -199,16 +180,13 @@ export function useEscrowConversion(range: AnalyticsRange) {
 }
 
 export function useEscrowAverages(range: AnalyticsRange) {
-  const contractVersion = useAnalyticsContractVersion();
   const query = useQuery({
     queryKey: adminAnalyticsQueryKey(
       "escrows-averages",
       networkQueryKey(),
       rangeQueryKey(range),
-      contractVersion,
     ),
-    queryFn: () =>
-      adminAnalyticsService.getEscrowAverages(range, contractVersion),
+    queryFn: () => adminAnalyticsService.getEscrowAverages(range),
     ...sharedQueryOptions,
   });
 
@@ -221,16 +199,13 @@ export function useEscrowAverages(range: AnalyticsRange) {
 }
 
 export function useVolumeVsFees(range: AnalyticsRange) {
-  const contractVersion = useAnalyticsContractVersion();
   const query = useQuery({
     queryKey: adminAnalyticsQueryKey(
       "volume-vs-fees",
       networkQueryKey(),
       rangeQueryKey(range),
-      contractVersion,
     ),
-    queryFn: () =>
-      adminAnalyticsService.getVolumeVsFees(range, contractVersion),
+    queryFn: () => adminAnalyticsService.getVolumeVsFees(range),
     ...sharedQueryOptions,
   });
 

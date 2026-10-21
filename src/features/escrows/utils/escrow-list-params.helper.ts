@@ -7,11 +7,8 @@ import { DEFAULT_KEYSET_LIMIT } from "@/types/pagination.entity";
 
 export type EscrowListRequestParams = Omit<ListEscrowsParams, "contractType"> & {
   type?: EscrowType;
-  /**
-   * Always sent. Omitting it makes the Core API return v2 only.
-   * `all` keeps v1, v2, and rows whose generation could not be derived.
-   */
-  contractVersion: EscrowListFilters["contractVersion"];
+  /** Escrow lists stay on the current contract generation. Analytics uses `all`. */
+  contractVersion: "v2";
 };
 
 export function toRestListParams(
@@ -24,7 +21,7 @@ export function toRestListParams(
   const params: EscrowListRequestParams = {
     scope: filters.scope,
     type: filters.type,
-    contractVersion: filters.contractVersion,
+    contractVersion: "v2",
     sort: filters.sort,
     order: filters.order,
     limit: options?.limit ?? DEFAULT_KEYSET_LIMIT,

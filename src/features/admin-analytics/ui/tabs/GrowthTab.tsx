@@ -24,7 +24,6 @@ import { Separator } from "@/components/ui/separator";
 import { formatInteger } from "@/helpers/chart-format.helper";
 import { growthHintLabel } from "@/helpers/period-key.helper";
 import type { AnalyticsRange } from "@/features/admin-analytics/constants/analytics-range";
-import { useAnalyticsContractVersion } from "@/features/admin-analytics/providers/AnalyticsContractVersionProvider";
 import {
   useEscrowGrowth,
   useUserGrowth,
@@ -49,7 +48,6 @@ type GrowthTabProps = {
 };
 
 export const GrowthTab = ({ range }: GrowthTabProps) => {
-  const contractVersion = useAnalyticsContractVersion();
   const escrowQuery = useEscrowGrowth(range);
   const usersQuery = useUserGrowth(range);
 
@@ -124,11 +122,7 @@ export const GrowthTab = ({ range }: GrowthTabProps) => {
       ) : null}
 
       <AnalyticsSection
-        description={
-          contractVersion === "all"
-            ? "Escrow creation and user sign-ups for the selected range."
-            : `Escrow creation for contract ${contractVersion}. User sign-ups include every account.`
-        }
+        description="Escrow creation and user sign-ups for the selected range."
         icon={GaugeIcon}
         title="Overview"
       >
@@ -219,11 +213,7 @@ export const GrowthTab = ({ range }: GrowthTabProps) => {
       </AnalyticsSection>
 
       <AnalyticsSection
-        description={
-          contractVersion === "all"
-            ? "Side-by-side view of sign-ups against escrow creation."
-            : `Sign-ups against ${contractVersion} escrow creation. Sign-ups are not split by contract generation.`
-        }
+        description="Side-by-side view of sign-ups against escrow creation."
         icon={ArrowLeftRightIcon}
         title="Escrows vs sign-ups"
       >

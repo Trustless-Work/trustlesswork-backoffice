@@ -5,10 +5,7 @@ import type {
   MultiReleaseEscrow,
   SingleReleaseEscrow,
 } from "@trustless-work/escrow";
-import type {
-  ContractGeneration,
-  ContractVersionFilter,
-} from "@/types";
+import type { ContractGeneration } from "@/types";
 
 export const ESCROW_TYPES = ["single-release", "multi-release"] as const;
 
@@ -100,7 +97,6 @@ export type EscrowListFilters = {
   subjectId: string;
   createdAfter: string;
   createdBefore: string;
-  contractVersion: ContractVersionFilter;
   sort: EscrowSortField;
   order: EscrowSortOrder;
 };
@@ -117,7 +113,6 @@ export const DEFAULT_ESCROW_LIST_FILTERS: EscrowListFilters = {
   subjectId: "",
   createdAfter: "",
   createdBefore: "",
-  contractVersion: "all",
   sort: "createdAt",
   order: "desc",
 };

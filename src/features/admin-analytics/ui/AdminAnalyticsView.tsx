@@ -19,8 +19,6 @@ import {
   resolveAnalyticsTab,
 } from "@/features/admin-analytics/ui/AnalyticsTabs";
 import { DataQualityBanner } from "@/features/admin-analytics/ui/DataQualityBanner";
-import { AnalyticsContractVersionProvider } from "@/features/admin-analytics/providers/AnalyticsContractVersionProvider";
-import { AnalyticsContractVersionSelect } from "@/features/admin-analytics/ui/filters/AnalyticsContractVersionSelect";
 import { ApiKeysFiltersPopover } from "@/features/admin-analytics/ui/filters/ApiKeysFiltersPopover";
 import { EscrowsFiltersPopover } from "@/features/admin-analytics/ui/filters/EscrowsFiltersPopover";
 import { RevenueFiltersPopover } from "@/features/admin-analytics/ui/filters/RevenueFiltersPopover";
@@ -61,13 +59,7 @@ const ApiKeysTab = dynamic(
   { loading: () => <ApiKeysTabSkeleton /> },
 );
 
-export const AdminAnalyticsView = () => (
-  <AnalyticsContractVersionProvider>
-    <AdminAnalyticsBody />
-  </AnalyticsContractVersionProvider>
-);
-
-const AdminAnalyticsBody = () => {
+export const AdminAnalyticsView = () => {
   const searchParams = useSearchParams();
   const activeTab = resolveAnalyticsTab(searchParams.get("tab"));
   const [range, setRange] = useState<AnalyticsRange>(DEFAULT_ANALYTICS_RANGE);
@@ -81,21 +73,13 @@ const AdminAnalyticsBody = () => {
   }, []);
 
   const filtersByTab: Record<AnalyticsTabId, ReactNode> = {
-    growth: <AnalyticsContractVersionSelect />,
-    revenue: (
-      <>
-        <AnalyticsContractVersionSelect />
-        <RevenueFiltersPopover controller={revenueFilters} range={range} />
-      </>
-    ),
+    growth: null,
+    revenue: <RevenueFiltersPopover controller={revenueFilters} range={range} />,
     escrows: (
-      <>
-        <AnalyticsContractVersionSelect />
-        <EscrowsFiltersPopover
-          topBy={escrowsTopBy}
-          onTopByChange={setEscrowsTopBy}
-        />
-      </>
+      <EscrowsFiltersPopover
+        topBy={escrowsTopBy}
+        onTopByChange={setEscrowsTopBy}
+      />
     ),
     "api-keys": (
       <ApiKeysFiltersPopover

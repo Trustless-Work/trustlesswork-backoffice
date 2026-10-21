@@ -4,7 +4,6 @@ import type {
   EscrowSummary,
   ListEscrowsParams,
 } from "@trustless-work/escrow";
-import type { ContractVersionFilter } from "@/types";
 import {
   aggregateDashboardMetrics,
   daysAgoIso,
@@ -39,13 +38,11 @@ export function createDashboardMetricsService(
         };
       }
 
-      const listParams: ListEscrowsParams & {
-        contractVersion: ContractVersionFilter;
-      } = {
+      const listParams: ListEscrowsParams & { contractVersion: "v2" } = {
         scope: "all",
         platformId: resolvedPlatformId,
         createdAfter: daysAgoIso(WINDOW_DAYS),
-        contractVersion: "all",
+        contractVersion: "v2",
         limit: DEFAULT_KEYSET_LIMIT,
         sort: "createdAt",
         order: "desc",

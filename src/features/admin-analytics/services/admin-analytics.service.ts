@@ -43,28 +43,24 @@ import type {
   StatusFunnelResponse,
   UserGrowthResponse,
 } from "@/features/admin-analytics/types/analytics.types";
-import type { ContractVersionFilter } from "@/types";
 
 const ANALYTICS_BASE = "/admin/analytics";
+const ANALYTICS_CONTRACT_VERSION = "all" as const;
 
 function withContractVersion<T extends object>(
   params: T,
-  contractVersion: ContractVersionFilter,
-): T & { contractVersion: ContractVersionFilter } {
+): T & { contractVersion: typeof ANALYTICS_CONTRACT_VERSION } {
   return {
     ...params,
-    contractVersion,
+    contractVersion: ANALYTICS_CONTRACT_VERSION,
   };
 }
 
 export const adminAnalyticsService = {
-  async getEscrowGrowth(
-    range: AnalyticsRange,
-    contractVersion: ContractVersionFilter = "all",
-  ): Promise<EscrowGrowthResponse> {
+  async getEscrowGrowth(range: AnalyticsRange): Promise<EscrowGrowthResponse> {
     const { data } = await adminHttp.get<unknown>(
       `${ANALYTICS_BASE}/escrows/monthly`,
-      { params: withContractVersion(seriesParams(range), contractVersion) },
+      { params: withContractVersion(seriesParams(range)) },
     );
     return escrowGrowthResponseSchema.parse(data);
   },
@@ -79,11 +75,10 @@ export const adminAnalyticsService = {
 
   async getRevenueByToken(
     range: AnalyticsRange,
-    contractVersion: ContractVersionFilter = "all",
   ): Promise<RevenueByTokenResponse> {
     const { data } = await adminHttp.get<unknown>(
       `${ANALYTICS_BASE}/revenue/monthly`,
-      { params: withContractVersion(seriesParams(range), contractVersion) },
+      { params: withContractVersion(seriesParams(range)) },
     );
     return revenueByTokenResponseSchema.parse(data);
   },
@@ -91,38 +86,31 @@ export const adminAnalyticsService = {
   async getRevenueEvents(
     range: AnalyticsRange,
     query: RevenueEventsQuery,
-    contractVersion: ContractVersionFilter = "all",
   ): Promise<RevenueEventsResponse> {
     const bounds = getUtcRangeBounds(range);
     const { data } = await adminHttp.get<unknown>(
       `${ANALYTICS_BASE}/revenue/events`,
       {
-        params: withContractVersion(
-          {
-            limit: query.limit,
-            offset: query.offset,
-            from: query.from ?? bounds.from,
-            to: query.to ?? bounds.to,
-            ...(query.eventType ? { eventType: query.eventType } : {}),
-            ...(query.sort ? { sort: query.sort } : {}),
-            ...(query.order ? { order: query.order } : {}),
-            ...(query.search ? { search: query.search } : {}),
-            ...(query.asset ? { asset: query.asset } : {}),
-          },
-          contractVersion,
-        ),
+        params: withContractVersion({
+          limit: query.limit,
+          offset: query.offset,
+          from: query.from ?? bounds.from,
+          to: query.to ?? bounds.to,
+          ...(query.eventType ? { eventType: query.eventType } : {}),
+          ...(query.sort ? { sort: query.sort } : {}),
+          ...(query.order ? { order: query.order } : {}),
+          ...(query.search ? { search: query.search } : {}),
+          ...(query.asset ? { asset: query.asset } : {}),
+        }),
       },
     );
     return revenueEventsResponseSchema.parse(data);
   },
 
-  async getStatusFunnel(
-    range: AnalyticsRange,
-    contractVersion: ContractVersionFilter = "all",
-  ): Promise<StatusFunnelResponse> {
+  async getStatusFunnel(range: AnalyticsRange): Promise<StatusFunnelResponse> {
     const { data } = await adminHttp.get<unknown>(
       `${ANALYTICS_BASE}/escrows/status`,
-      { params: withContractVersion(rangeParams(range), contractVersion) },
+      { params: withContractVersion(rangeParams(range)) },
     );
     return statusFunnelResponseSchema.parse(data);
   },
@@ -131,15 +119,11 @@ export const adminAnalyticsService = {
     range: AnalyticsRange,
     by: EscrowsTopBy,
     limit = 10,
-    contractVersion: ContractVersionFilter = "all",
   ): Promise<EscrowsTopResponse> {
     const { data } = await adminHttp.get<unknown>(
       `${ANALYTICS_BASE}/escrows/top`,
       {
-        params: withContractVersion(
-          { ...rangeParams(range), by, limit },
-          contractVersion,
-        ),
+        params: withContractVersion({ ...rangeParams(range), by, limit }),
       },
     );
     return escrowsTopResponseSchema.parse(data);
@@ -147,33 +131,28 @@ export const adminAnalyticsService = {
 
   async getEscrowConversion(
     range: AnalyticsRange,
-    contractVersion: ContractVersionFilter = "all",
   ): Promise<EscrowConversionResponse> {
     const { data } = await adminHttp.get<unknown>(
       `${ANALYTICS_BASE}/escrows/conversion`,
-      { params: withContractVersion(seriesParams(range), contractVersion) },
+      { params: withContractVersion(seriesParams(range)) },
     );
     return escrowConversionResponseSchema.parse(data);
   },
 
   async getEscrowAverages(
     range: AnalyticsRange,
-    contractVersion: ContractVersionFilter = "all",
   ): Promise<EscrowAveragesResponse> {
     const { data } = await adminHttp.get<unknown>(
       `${ANALYTICS_BASE}/escrows/averages`,
-      { params: withContractVersion(rangeParams(range), contractVersion) },
+      { params: withContractVersion(rangeParams(range)) },
     );
     return escrowAveragesResponseSchema.parse(data);
   },
 
-  async getVolumeVsFees(
-    range: AnalyticsRange,
-    contractVersion: ContractVersionFilter = "all",
-  ): Promise<VolumeVsFeesResponse> {
+  async getVolumeVsFees(range: AnalyticsRange): Promise<VolumeVsFeesResponse> {
     const { data } = await adminHttp.get<unknown>(
       `${ANALYTICS_BASE}/volume-vs-fees`,
-      { params: withContractVersion(seriesParams(range), contractVersion) },
+      { params: withContractVersion(seriesParams(range)) },
     );
     return volumeVsFeesResponseSchema.parse(data);
   },

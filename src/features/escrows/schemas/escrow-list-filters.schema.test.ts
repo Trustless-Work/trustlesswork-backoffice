@@ -75,22 +75,6 @@ describe("escrowListFiltersToSearchParams", () => {
     expect(parsed.engagementId).toBe("ENG-9");
     expect(parsed.role).toBe("admin");
   });
-
-  it("round-trips a contract generation filter", () => {
-    const filters = {
-      ...DEFAULT_ESCROW_LIST_FILTERS,
-      contractVersion: "v2" as const,
-    };
-
-    const parsed = parseEscrowListFiltersFromSearchParams(
-      escrowListFiltersToSearchParams(filters),
-    );
-
-    expect(parsed.contractVersion).toBe("v2");
-    expect(escrowListFiltersToSearchParams(DEFAULT_ESCROW_LIST_FILTERS).has(
-      "contractVersion",
-    )).toBe(false);
-  });
 });
 
 describe("toRestListParams", () => {
@@ -109,7 +93,7 @@ describe("toRestListParams", () => {
     expect(params).toMatchObject({
       scope: "mine",
       type: "multi-release",
-      contractVersion: "all",
+      contractVersion: "v2",
       status: "released",
       participant: "GXYZ",
       role: "receiver",
@@ -119,15 +103,6 @@ describe("toRestListParams", () => {
       order: "desc",
     });
     expect(params).not.toHaveProperty("contractType");
-  });
-
-  it("sends an explicit contract generation filter", () => {
-    const params = toRestListParams({
-      ...DEFAULT_ESCROW_LIST_FILTERS,
-      contractVersion: "v1",
-    });
-
-    expect(params.contractVersion).toBe("v1");
   });
 });
 
@@ -147,18 +122,8 @@ describe("countActiveEscrowFilters", () => {
         ...DEFAULT_ESCROW_LIST_FILTERS,
         status: "active",
         engagementId: "x",
-        contractVersion: "v1",
       }),
-    ).toBe(3);
-  });
-
-  it("does not count the default all-generations filter", () => {
-    expect(
-      countActiveEscrowFilters({
-        ...DEFAULT_ESCROW_LIST_FILTERS,
-        contractVersion: "all",
-      }),
-    ).toBe(0);
+    ).toBe(2);
   });
 });
 

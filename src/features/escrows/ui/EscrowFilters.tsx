@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/select";
 import { useEscrowListSearchParams } from "@/features/escrows/hooks/useEscrowListSearchParams";
 import { EscrowActiveFilterChips } from "@/features/escrows/ui/EscrowActiveFilterChips";
-import { EscrowContractVersionFilter } from "@/features/escrows/ui/EscrowContractVersionFilter";
 import { EscrowCreatedRangeFilter } from "@/features/escrows/ui/EscrowCreatedRangeFilter";
 import {
   ANY_ROLE_FILTER_ICON,
@@ -127,12 +126,6 @@ export const EscrowFiltersBar = () => {
             </SelectContent>
           </Select>
         </div>
-
-        <EscrowContractVersionFilter
-          className={`${FILTER_CONTROL_CLASSNAME} capitalize`}
-          value={draft.contractVersion}
-          onChange={(value) => setFilter("contractVersion", value)}
-        />
 
         <div className="grid min-w-0 flex-[0.95] grid-cols-2 gap-3">
           <div className="space-y-1.5">
@@ -274,7 +267,6 @@ export const EscrowFiltersBar = () => {
           onClearEngagement={() => setTextFilter("engagementId", "")}
           onClearParticipant={() => setTextFilter("participant", "")}
           onClearRole={() => setFilter("role", undefined)}
-          onClearContractVersion={() => setFilter("contractVersion", "all")}
           onClearCreatedRange={() =>
             setFilters((prev) => ({
               ...prev,
