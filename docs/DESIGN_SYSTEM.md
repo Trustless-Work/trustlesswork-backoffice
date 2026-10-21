@@ -679,6 +679,7 @@ Home / marketing is a **different** visual language. Do not copy into the dashbo
 | Artifact | Path |
 | --- | --- |
 | This document | `docs/DESIGN_SYSTEM.md` |
+| Action icons / sizes cheatsheet | `docs/UI_CHEATSHEET.md` |
 | CSS tokens | `src/app/globals.css` |
 | Fonts | `src/app/layout.tsx` |
 | shadcn config | `components.json` |

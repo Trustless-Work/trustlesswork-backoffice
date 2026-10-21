@@ -2,7 +2,9 @@ import type {
   EscrowFinancial,
   EscrowRestService,
   EscrowSummary,
+  ListEscrowsParams,
 } from "@trustless-work/escrow";
+import type { ContractVersionFilter } from "@/types";
 import {
   aggregateDashboardMetrics,
   daysAgoIso,
@@ -37,14 +39,18 @@ export function createDashboardMetricsService(
         };
       }
 
-      const page = await services.rest.listEscrows({
+      const listParams: ListEscrowsParams & {
+        contractVersion: ContractVersionFilter;
+      } = {
         scope: "all",
         platformId: resolvedPlatformId,
         createdAfter: daysAgoIso(WINDOW_DAYS),
+        contractVersion: "all",
         limit: DEFAULT_KEYSET_LIMIT,
         sort: "createdAt",
         order: "desc",
-      });
+      };
+      const page = await services.rest.listEscrows(listParams);
 
       const escrows = page.data;
       const contractIds = escrows.map((row) => row.contractId);

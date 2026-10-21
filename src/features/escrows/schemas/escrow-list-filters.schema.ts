@@ -9,6 +9,7 @@ import {
   ESCROW_TYPES,
   type EscrowListFilters,
 } from "@/features/escrows/types/escrow.types";
+import { CONTRACT_VERSION_FILTERS } from "@/types";
 
 function emptyToUndefined(value: string | undefined): string | undefined {
   if (value === undefined || value.trim() === "") {
@@ -30,6 +31,9 @@ export const escrowListFiltersSchema = z.object({
   subjectId: z.string().default(""),
   createdAfter: z.string().default(""),
   createdBefore: z.string().default(""),
+  contractVersion: z
+    .enum(CONTRACT_VERSION_FILTERS)
+    .default(DEFAULT_ESCROW_LIST_FILTERS.contractVersion),
   sort: z.enum(ESCROW_SORT_FIELDS).default(DEFAULT_ESCROW_LIST_FILTERS.sort),
   order: z.enum(ESCROW_SORT_ORDERS).default(DEFAULT_ESCROW_LIST_FILTERS.order),
 });
@@ -64,6 +68,7 @@ export function parseEscrowListFiltersFromSearchParams(
     subjectId: params.get("subjectId") ?? "",
     createdAfter: params.get("createdAfter") ?? "",
     createdBefore: params.get("createdBefore") ?? "",
+    contractVersion: params.get("contractVersion") ?? undefined,
     sort: params.get("sort") ?? undefined,
     order: params.get("order") ?? undefined,
   });
@@ -84,6 +89,7 @@ export function parseEscrowListFiltersFromSearchParams(
     subjectId: parsed.data.subjectId,
     createdAfter: parsed.data.createdAfter,
     createdBefore: parsed.data.createdBefore,
+    contractVersion: parsed.data.contractVersion,
     sort: parsed.data.sort,
     order: parsed.data.order,
   };
@@ -139,6 +145,10 @@ export function escrowListFiltersToSearchParams(
     params.set("createdBefore", filters.createdBefore.trim());
   }
 
+  if (filters.contractVersion !== defaults.contractVersion) {
+    params.set("contractVersion", filters.contractVersion);
+  }
+
   if (filters.sort !== defaults.sort) {
     params.set("sort", filters.sort);
   }
@@ -163,6 +173,7 @@ export function countActiveEscrowFilters(filters: EscrowListFilters): number {
   if (filters.platformId.trim()) count += 1;
   if (filters.subjectId.trim()) count += 1;
   if (filters.createdAfter.trim() || filters.createdBefore.trim()) count += 1;
+  if (filters.contractVersion !== defaults.contractVersion) count += 1;
   if (filters.sort !== defaults.sort) count += 1;
   if (filters.order !== defaults.order) count += 1;
 

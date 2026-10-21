@@ -5,5 +5,6 @@ export async function GET(request: NextRequest) {
   return handleAdminAnalyticsMonthlyGet(
     request,
     "/analytics/revenue/monthly",
+    { forwardContractVersion: true },
   );
 }

@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import type { ProblemDetails } from "@/lib/api-error";
 import type { AdminSessionRejectionReason } from "@/features/admin-auth/types/admin-auth.types";
+import {
+  isContractVersionFilter,
+  type ContractVersionFilter,
+} from "@/types";
 
 const REJECTION_MESSAGES: Record<AdminSessionRejectionReason, string> = {
   unauthenticated: "Admin session required",
@@ -399,6 +403,31 @@ export function parseRevenueEventsParams(
       ...(asset ? { asset } : {}),
     },
   };
+}
+
+type ParseContractVersionResult =
+  | { readonly ok: true; readonly value: ContractVersionFilter | undefined }
+  | { readonly ok: false; readonly error: NextResponse };
+
+export function parseOptionalContractVersionParam(
+  searchParams: URLSearchParams,
+): ParseContractVersionResult {
+  const raw = searchParams.get("contractVersion");
+  if (raw === null) {
+    return { ok: true, value: undefined };
+  }
+
+  const trimmed = raw.trim();
+  if (!isContractVersionFilter(trimmed)) {
+    const body: ProblemDetails = {
+      status: 400,
+      code: "VALIDATION_ERROR",
+      detail: "contractVersion must be v1, v2, or all",
+    };
+    return { ok: false, error: NextResponse.json(body, { status: 400 }) };
+  }
+
+  return { ok: true, value: trimmed };
 }
 
 type ParseMonthsResult =

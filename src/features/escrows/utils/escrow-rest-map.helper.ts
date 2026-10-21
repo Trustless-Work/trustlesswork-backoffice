@@ -23,6 +23,7 @@ import type {
 } from "@/features/escrows/types/escrow.types";
 import { isEscrowType } from "@/features/escrows/types/escrow.types";
 import { readEscrowWireAmount } from "@/helpers/escrow-amount.helper";
+import { isContractGeneration, type ContractGeneration } from "@/types";
 
 export function parseEscrowAmount(
   value: string | number | null | undefined,
@@ -102,6 +103,19 @@ type SummaryLike = {
   snapshot: unknown;
 };
 
+function readContractVersion(summary: object): ContractGeneration | null {
+  if (!("contractVersion" in summary)) {
+    return null;
+  }
+
+  const value = summary.contractVersion;
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  return isContractGeneration(value) ? value : null;
+}
+
 function readApiVersion(summary: object): string | null {
   if (!("apiVersion" in summary)) {
     return null;
@@ -174,6 +188,7 @@ function mapSingleStored(
     updatedAt: summary.updatedAt,
     status: summary.status,
     apiVersion: readApiVersion(summary),
+    contractVersion: readContractVersion(summary),
   };
 }
 
@@ -204,6 +219,7 @@ function mapMultiStored(
     updatedAt: summary.updatedAt,
     status: summary.status,
     apiVersion: readApiVersion(summary),
+    contractVersion: readContractVersion(summary),
   };
 }
 

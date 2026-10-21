@@ -7,6 +7,7 @@ import {
   getEscrowStatusBadgeVariant,
   getEscrowStatusLabel,
   getEscrowTypeLabel,
+  getContractVersionLabel,
   isEscrowDisputed,
   isEscrowReleased,
 } from "@/features/escrows/utils/escrow-display.helper";
@@ -89,6 +90,32 @@ export const EscrowCardStatusBadge = ({
         : status === "released"
           ? "Released"
           : "Disputed"}
+    </Badge>
+  );
+};
+
+type EscrowContractVersionBadgeProps = {
+  contractVersion: string | null | undefined;
+  className?: string;
+};
+
+export const EscrowContractVersionBadge = ({
+  contractVersion,
+  className,
+}: EscrowContractVersionBadgeProps) => {
+  const label = getContractVersionLabel(contractVersion);
+
+  return (
+    <Badge
+      variant="outline"
+      title={
+        label === "Unknown"
+          ? "On-chain contract generation could not be derived"
+          : "On-chain contract generation"
+      }
+      className={cn("font-mono font-normal uppercase", className)}
+    >
+      {label === "Unknown" ? "Unknown" : `Contract ${label}`}
     </Badge>
   );
 };

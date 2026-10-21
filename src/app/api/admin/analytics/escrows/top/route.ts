@@ -8,5 +8,6 @@ export async function GET(request: NextRequest) {
     request,
     "/analytics/escrows/top",
     ALLOWED_BY,
+    { forwardContractVersion: true },
   );
 }

@@ -3,8 +3,42 @@ import {
   DEFAULT_ANALYTICS_MONTHS,
   parseAnalyticsTopParams,
   parseMonthsParam,
+  parseOptionalContractVersionParam,
   parseRevenueEventsParams,
 } from "@/lib/admin-session-response";
+
+describe("parseOptionalContractVersionParam", () => {
+  it("omits the filter when the param is absent", () => {
+    const result = parseOptionalContractVersionParam(new URLSearchParams());
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value).toBeUndefined();
+    }
+  });
+
+  it("accepts v1, v2, and all", () => {
+    const result = parseOptionalContractVersionParam(
+      new URLSearchParams({ contractVersion: "v1" }),
+    );
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value).toBe("v1");
+    }
+  });
+
+  it("rejects empty and unknown values", () => {
+    expect(
+      parseOptionalContractVersionParam(
+        new URLSearchParams({ contractVersion: "" }),
+      ).ok,
+    ).toBe(false);
+    expect(
+      parseOptionalContractVersionParam(
+        new URLSearchParams({ contractVersion: "v3" }),
+      ).ok,
+    ).toBe(false);
+  });
+});
 
 describe("parseMonthsParam", () => {
   it("returns the default when the param is missing", () => {

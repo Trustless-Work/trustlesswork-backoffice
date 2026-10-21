@@ -16,6 +16,15 @@ export {
 export type { UserProfileFields, UserResponse } from "@/types/user.entity";
 
 export {
+  CONTRACT_GENERATIONS,
+  CONTRACT_VERSION_FILTERS,
+  isContractGeneration,
+  isContractVersionFilter,
+  type ContractGeneration,
+  type ContractVersionFilter,
+} from "@/types/contract-version";
+
+export {
   isRegisteredSessionChallenge,
   isUnregisteredSessionChallenge,
   type Sep10Challenge,

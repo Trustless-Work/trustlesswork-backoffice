@@ -7,9 +7,11 @@ import {
   createAdminForbiddenResponse,
   parseAnalyticsSeriesParams,
   parseAnalyticsTopParams,
+  parseOptionalContractVersionParam,
   parseRangeParams,
   parseRevenueEventsParams,
 } from "@/lib/admin-session-response";
+import type { ContractVersionFilter } from "@/types";
 
 export async function handleAdminAnalyticsGet(
   request: NextRequest,
@@ -28,13 +30,44 @@ export async function handleAdminAnalyticsGet(
 function buildSeriesQuery(params: {
   granularity: string;
   periods: number;
-}): string {
-  return `granularity=${params.granularity}&periods=${params.periods}`;
+}): URLSearchParams {
+  return new URLSearchParams({
+    granularity: params.granularity,
+    periods: String(params.periods),
+  });
+}
+
+type AnalyticsProxyOptions = {
+  readonly forwardContractVersion?: boolean;
+};
+
+function applyContractVersion(
+  query: URLSearchParams,
+  contractVersion: ContractVersionFilter | undefined,
+): URLSearchParams {
+  if (contractVersion) {
+    query.set("contractVersion", contractVersion);
+  }
+  return query;
+}
+
+function readForwardedContractVersion(
+  request: NextRequest,
+  options?: AnalyticsProxyOptions,
+):
+  | { readonly ok: true; readonly value: ContractVersionFilter | undefined }
+  | { readonly ok: false; readonly error: Response } {
+  if (!options?.forwardContractVersion) {
+    return { ok: true, value: undefined };
+  }
+
+  return parseOptionalContractVersionParam(request.nextUrl.searchParams);
 }
 
 export async function handleAdminAnalyticsMonthlyGet(
   request: NextRequest,
   corePath: string,
+  options?: AnalyticsProxyOptions,
 ): Promise<Response> {
   const session = await getAdminSession();
   if (session.status !== "ok") {
@@ -46,11 +79,19 @@ export async function handleAdminAnalyticsMonthlyGet(
     return parsed.error;
   }
 
-  const network = parseRequestNetwork(request);
-  const response = await adminFetch(
-    `${corePath}?${buildSeriesQuery(parsed.value)}`,
-    { network },
+  const contractVersion = readForwardedContractVersion(request, options);
+  if (!contractVersion.ok) {
+    return contractVersion.error;
+  }
+
+  const query = applyContractVersion(
+    buildSeriesQuery(parsed.value),
+    contractVersion.value,
   );
+  const network = parseRequestNetwork(request);
+  const response = await adminFetch(`${corePath}?${query.toString()}`, {
+    network,
+  });
   return proxyCoreResponse(response);
 }
 
@@ -93,6 +134,14 @@ export async function handleAdminAnalyticsRevenueEventsGet(
     query.set("asset", parsed.value.asset);
   }
 
+  const contractVersion = parseOptionalContractVersionParam(
+    request.nextUrl.searchParams,
+  );
+  if (!contractVersion.ok) {
+    return contractVersion.error;
+  }
+  applyContractVersion(query, contractVersion.value);
+
   const network = parseRequestNetwork(request);
   const response = await adminFetch(
     `/analytics/revenue/events?${query.toString()}`,
@@ -118,6 +167,7 @@ function appendRangeQuery(
 export async function handleAdminAnalyticsRangeGet(
   request: NextRequest,
   corePath: string,
+  options?: AnalyticsProxyOptions,
 ): Promise<Response> {
   const session = await getAdminSession();
   if (session.status !== "ok") {
@@ -129,7 +179,15 @@ export async function handleAdminAnalyticsRangeGet(
     return parsed.error;
   }
 
-  const query = appendRangeQuery(new URLSearchParams(), parsed.value);
+  const contractVersion = readForwardedContractVersion(request, options);
+  if (!contractVersion.ok) {
+    return contractVersion.error;
+  }
+
+  const query = applyContractVersion(
+    appendRangeQuery(new URLSearchParams(), parsed.value),
+    contractVersion.value,
+  );
   const suffix = query.size > 0 ? `?${query.toString()}` : "";
   const network = parseRequestNetwork(request);
   const response = await adminFetch(`${corePath}${suffix}`, { network });
@@ -140,6 +198,7 @@ export async function handleAdminAnalyticsTopGet(
   request: NextRequest,
   corePath: string,
   allowedBy: readonly string[],
+  options?: AnalyticsProxyOptions,
 ): Promise<Response> {
   const session = await getAdminSession();
   if (session.status !== "ok") {
@@ -154,12 +213,20 @@ export async function handleAdminAnalyticsTopGet(
     return parsed.error;
   }
 
-  const query = appendRangeQuery(
-    new URLSearchParams({
-      by: parsed.value.by,
-      limit: String(parsed.value.limit),
-    }),
-    parsed.value,
+  const contractVersion = readForwardedContractVersion(request, options);
+  if (!contractVersion.ok) {
+    return contractVersion.error;
+  }
+
+  const query = applyContractVersion(
+    appendRangeQuery(
+      new URLSearchParams({
+        by: parsed.value.by,
+        limit: String(parsed.value.limit),
+      }),
+      parsed.value,
+    ),
+    contractVersion.value,
   );
   const network = parseRequestNetwork(request);
   const response = await adminFetch(`${corePath}?${query.toString()}`, {

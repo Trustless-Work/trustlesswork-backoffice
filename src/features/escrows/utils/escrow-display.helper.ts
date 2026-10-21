@@ -247,3 +247,13 @@ export function matchesEscrowFilterStatus(
 
   return !isEscrowReleased(escrow) && !isEscrowDisputed(escrow);
 }
+
+export function getContractVersionLabel(
+  contractVersion: string | null | undefined,
+): string {
+  if (contractVersion === "v1" || contractVersion === "v2") {
+    return contractVersion;
+  }
+
+  return "Unknown";
+}

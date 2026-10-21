@@ -7,6 +7,7 @@ export const EscrowFiltersBarSkeleton = () => (
     <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
       <Skeleton className="h-9 min-w-0 flex-[1.25]" />
       <Skeleton className="h-9 min-w-0 flex-1" />
+      <Skeleton className="h-9 min-w-0 flex-[0.9]" />
       <div className="grid min-w-0 flex-[0.95] grid-cols-2 gap-3">
         <Skeleton className="h-9 w-full" />
         <Skeleton className="h-9 w-full" />

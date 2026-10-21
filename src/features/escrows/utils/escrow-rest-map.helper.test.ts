@@ -60,6 +60,7 @@ describe("mapEscrowSummaryToStored", () => {
       balance: 250.5,
       status: "active",
       apiVersion: null,
+      contractVersion: null,
       roles: expect.objectContaining({
         observers: ["G8"],
       }),
@@ -72,6 +73,28 @@ describe("mapEscrowSummaryToStored", () => {
     );
 
     expect(stored?.apiVersion).toBe("v1");
+  });
+
+  it("reads contract generation without using apiVersion", () => {
+    const stored = mapEscrowSummaryToStored(
+      Object.assign(buildEscrowSummary(), {
+        apiVersion: "v1",
+        contractVersion: "v2",
+      }),
+    );
+
+    expect(stored?.apiVersion).toBe("v1");
+    expect(stored?.contractVersion).toBe("v2");
+  });
+
+  it("treats a missing or unknown contractVersion as null", () => {
+    const missing = mapEscrowSummaryToStored(buildEscrowSummary());
+    const unknown = mapEscrowSummaryToStored(
+      Object.assign(buildEscrowSummary(), { contractVersion: "v3" }),
+    );
+
+    expect(missing?.contractVersion).toBeNull();
+    expect(unknown?.contractVersion).toBeNull();
   });
 
   it("allows explicit balance override", () => {

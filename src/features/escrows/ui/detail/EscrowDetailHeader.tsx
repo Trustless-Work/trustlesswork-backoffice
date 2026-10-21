@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { StoredEscrow } from "@/features/escrows/types/escrow.types";
 import {
   EscrowApiVersionBadge,
+  EscrowContractVersionBadge,
   EscrowStatusBadge,
   EscrowTypeBadge,
 } from "@/features/escrows/ui/EscrowStatusBadge";
@@ -30,6 +31,7 @@ export const EscrowDetailHeader = ({
 
       <div className="flex items-center gap-2">
         <EscrowTypeBadge escrow={escrow} />
+        <EscrowContractVersionBadge contractVersion={escrow.contractVersion} />
         <EscrowApiVersionBadge apiVersion={escrow.apiVersion} />
         <EscrowStatusBadge escrow={escrow} />
       </div>

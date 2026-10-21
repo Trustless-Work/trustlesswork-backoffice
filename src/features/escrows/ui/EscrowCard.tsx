@@ -9,6 +9,7 @@ import { isStoredMultiReleaseEscrow } from "@/features/escrows/types/escrow.type
 import {
   EscrowApiVersionBadge,
   EscrowCardStatusBadge,
+  EscrowContractVersionBadge,
   EscrowTypeBadge,
 } from "@/features/escrows/ui/EscrowStatusBadge";
 import { MilestoneFlagsBadges } from "@/features/escrows/ui/MilestoneFlagsBadges";
@@ -170,6 +171,7 @@ export const EscrowCard = ({ item }: EscrowCardProps) => {
           >
             {formatIsoDateTimeCompact(item.createdAt)}
           </time>
+          <EscrowContractVersionBadge contractVersion={escrow.contractVersion} />
           <EscrowApiVersionBadge apiVersion={escrow.apiVersion} />
         </footer>
       </article>

@@ -27,6 +27,7 @@ type EscrowActiveFilterChipsProps = {
   onClearEngagement: () => void;
   onClearParticipant: () => void;
   onClearRole: () => void;
+  onClearContractVersion: () => void;
   onClearCreatedRange: () => void;
 };
 
@@ -36,6 +37,7 @@ export const EscrowActiveFilterChips = ({
   onClearEngagement,
   onClearParticipant,
   onClearRole,
+  onClearContractVersion,
   onClearCreatedRange,
 }: EscrowActiveFilterChipsProps) => (
   <div className="mt-3 flex flex-wrap gap-2">
@@ -76,6 +78,18 @@ export const EscrowActiveFilterChips = ({
         <RoleFilterIcon role={draft.role} className="size-3.5" />
         {ROLE_LABELS[draft.role]}
         <button type="button" aria-label="Clear role" onClick={onClearRole}>
+          <XIcon className="size-3" />
+        </button>
+      </Badge>
+    ) : null}
+    {draft.contractVersion !== "all" ? (
+      <Badge variant="outline" className="gap-1 capitalize">
+        Contract: {draft.contractVersion}
+        <button
+          type="button"
+          aria-label="Clear contract generation"
+          onClick={onClearContractVersion}
+        >
           <XIcon className="size-3" />
         </button>
       </Badge>
