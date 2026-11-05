@@ -17,6 +17,7 @@ import {
 type MainnetBetaWarningDialogProps = {
   open: boolean;
   isSwitching: boolean;
+  walletOnTestnet: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
 };
@@ -36,9 +37,20 @@ const WARNINGS = [
   },
 ] as const;
 
+const WALLET_ON_TESTNET_WARNING = {
+  title: "Your wallet is on Testnet",
+  body: "While the app and your wallet are on different networks, actions like creating an escrow can fail. Make sure both match.",
+};
+
+const warningsFor = (
+  walletOnTestnet: boolean,
+): readonly { title: string; body: string }[] =>
+  walletOnTestnet ? [WALLET_ON_TESTNET_WARNING, ...WARNINGS] : WARNINGS;
+
 export const MainnetBetaWarningDialog = ({
   open,
   isSwitching,
+  walletOnTestnet,
   onOpenChange,
   onConfirm,
 }: MainnetBetaWarningDialogProps) => (
@@ -66,7 +78,7 @@ export const MainnetBetaWarningDialog = ({
       </p>
 
       <ul className="flex flex-col gap-2">
-        {WARNINGS.map((warning) => (
+        {warningsFor(walletOnTestnet).map((warning) => (
           <li
             key={warning.title}
             className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm"

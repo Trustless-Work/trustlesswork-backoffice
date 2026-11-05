@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useMounted } from "@/hooks/useMounted";
 import { Switch } from "@/components/ui/switch";
 import { MainnetBetaWarningDialog } from "@/components/shared/MainnetBetaWarningDialog";
+import { WalletNetworkMismatchDialog } from "@/components/shared/WalletNetworkMismatchDialog";
+import { getWalletNetwork } from "@/components/tw-blocks/wallet-kit/wallet-kit";
 import {
   Tooltip,
   TooltipContent,
@@ -11,6 +13,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import useNetwork from "@/hooks/useNetwork";
+import { useWalletContext } from "@/providers/WalletProvider";
 import type { NetworkType } from "@/types/network.entity";
 
 const NETWORK_SWITCHING_ENABLED = true;
@@ -25,7 +28,10 @@ type NetworkToggleProps = {
 export const NetworkToggle = ({ className }: NetworkToggleProps) => {
   const { currentNetwork, changeNetwork, isReseting } = useNetwork();
   const mounted = useMounted();
+  const { walletAddress } = useWalletContext();
   const [showMainnetDialog, setShowMainnetDialog] = useState(false);
+  const [walletOnTestnet, setWalletOnTestnet] = useState(false);
+  const [showMismatchDialog, setShowMismatchDialog] = useState(false);
   const [pendingNetwork, setPendingNetwork] = useState<NetworkType | null>(
     null,
   );
@@ -40,18 +46,27 @@ export const NetworkToggle = ({ className }: NetworkToggleProps) => {
     ? pendingNetwork === "mainnet" || currentNetwork === "mainnet"
     : false;
 
-  const handleSwitchChange = (checked: boolean) => {
+  const handleSwitchChange = async (checked: boolean) => {
     if (!NETWORK_SWITCHING_ENABLED) {
       return;
     }
 
+    const walletNetwork = walletAddress ? await getWalletNetwork() : undefined;
+
     if (checked) {
+      setWalletOnTestnet(walletNetwork === "testnet");
       setPendingNetwork("mainnet");
       setShowMainnetDialog(true);
       return;
     }
 
     setPendingNetwork(null);
+
+    if (walletNetwork === "mainnet") {
+      setShowMismatchDialog(true);
+      return;
+    }
+
     changeNetwork("testnet");
   };
 
@@ -130,8 +145,18 @@ export const NetworkToggle = ({ className }: NetworkToggleProps) => {
         <MainnetBetaWarningDialog
           open={showMainnetDialog}
           isSwitching={isReseting}
+          walletOnTestnet={walletOnTestnet}
           onOpenChange={handleDialogOpenChange}
           onConfirm={handleConfirmMainnet}
+        />
+      ) : null}
+
+      {NETWORK_SWITCHING_ENABLED ? (
+        <WalletNetworkMismatchDialog
+          open={showMismatchDialog}
+          isSwitching={isReseting}
+          onOpenChange={setShowMismatchDialog}
+          onConfirm={() => changeNetwork("testnet")}
         />
       ) : null}
     </>
