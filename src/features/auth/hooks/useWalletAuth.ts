@@ -5,7 +5,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useWallet } from "@/components/tw-blocks/wallet-kit/useWallet";
-import { signTransaction } from "@/components/tw-blocks/wallet-kit/wallet-kit";
+import {
+  getChallengeNetwork,
+  signTransaction,
+} from "@/components/tw-blocks/wallet-kit/wallet-kit";
 import { useWalletContext } from "@/providers/WalletProvider";
 import { authService } from "@/features/auth/services/auth.service";
 import type { RegisterProfileInput } from "@/features/auth/types/auth.types";
@@ -57,8 +60,10 @@ export function useWalletAuth() {
 
   const performSessionLogin = useCallback(
     async (address: string): Promise<"authenticated" | "needs_register"> => {
-      const challengeResult =
-        await authService.requestSessionChallenge(address);
+      const challengeResult = await authService.requestSessionChallenge(
+        address,
+        await getChallengeNetwork(),
+      );
 
       if (!isRegisteredSessionChallenge(challengeResult)) {
         return "needs_register";
@@ -152,7 +157,10 @@ export function useWalletAuth() {
 
       try {
         setPhase("signing");
-        const challenge = await authService.requestRegisterChallenge(address);
+        const challenge = await authService.requestRegisterChallenge(
+          address,
+          await getChallengeNetwork(),
+        );
         const signedXdr = await signTransaction({
           unsignedTransaction: challenge.xdr,
           address,

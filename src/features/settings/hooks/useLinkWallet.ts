@@ -4,7 +4,10 @@ import { useCallback, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useWallet } from "@/components/tw-blocks/wallet-kit/useWallet";
-import { signTransaction } from "@/components/tw-blocks/wallet-kit/wallet-kit";
+import {
+  getChallengeNetwork,
+  signTransaction,
+} from "@/components/tw-blocks/wallet-kit/wallet-kit";
 import { walletService } from "@/features/settings/services/wallet.service";
 import { USER_WALLETS_QUERY_KEY } from "@/features/settings/hooks/useUserWallets";
 import { isApiError, parseApiError } from "@/lib/api-error";
@@ -47,7 +50,10 @@ export function useLinkWallet() {
       }
 
       setPhase("signing");
-      const challenge = await walletService.requestLinkChallenge(address);
+      const challenge = await walletService.requestLinkChallenge(
+        address,
+        await getChallengeNetwork(),
+      );
       const signedXdr = await signTransaction({
         unsignedTransaction: challenge.xdr,
         address,

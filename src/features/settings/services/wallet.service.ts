@@ -1,4 +1,5 @@
 import http from "@/lib/http";
+import type { ChallengeNetwork } from "@/features/auth/lib/challenge-network";
 import type { Sep10Challenge } from "@/types";
 import type {
   UserWalletResponse,
@@ -26,10 +27,13 @@ export class WalletService {
     return fetchAllKeysetPages((params) => this.listWalletsPage(params));
   }
 
-  async requestLinkChallenge(address: string): Promise<Sep10Challenge> {
+  async requestLinkChallenge(
+    address: string,
+    network: ChallengeNetwork,
+  ): Promise<Sep10Challenge> {
     const { data } = await http.post<Sep10Challenge>(
       "/identity/wallets/link/challenge",
-      { address },
+      { address, network },
     );
     return data;
   }

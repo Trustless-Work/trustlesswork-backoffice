@@ -30,6 +30,8 @@ import type {
   UserResponse,
 } from "@/types";
 
+import type { ChallengeNetwork } from "@/features/auth/lib/challenge-network";
+
 // ─── Session auth ───────────────────────────────────────────────────────────
 
 export interface SessionVerifyResponse {
@@ -104,9 +106,11 @@ export type RegisterProfileInput = Required<
 
 export interface AuthChallengeRequest {
   address: StellarAddress;
+  network?: ChallengeNetwork;
 }
 
-export interface AuthVerifyRequest extends AuthChallengeRequest {
+export interface AuthVerifyRequest {
+  address: StellarAddress;
   signedXdr: string;
 }
 

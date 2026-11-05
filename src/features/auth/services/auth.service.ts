@@ -1,4 +1,5 @@
 import http from "@/lib/http";
+import type { ChallengeNetwork } from "@/features/auth/lib/challenge-network";
 import type {
   RegisterProfileInput,
   RegisterVerifyResult,
@@ -13,10 +14,11 @@ import type {
 export class AuthService {
   async requestSessionChallenge(
     address: string,
+    network: ChallengeNetwork,
   ): Promise<SessionChallengeResponse> {
     const { data } = await http.post<SessionChallengeResponse>(
       "/auth/session/challenge",
-      { address },
+      { address, network },
     );
     return data;
   }
@@ -32,10 +34,13 @@ export class AuthService {
     return { token: "", expiresAt: data.expiresAt };
   }
 
-  async requestRegisterChallenge(address: string): Promise<Sep10Challenge> {
+  async requestRegisterChallenge(
+    address: string,
+    network: ChallengeNetwork,
+  ): Promise<Sep10Challenge> {
     const { data } = await http.post<Sep10Challenge>(
       "/auth/register/challenge",
-      { address },
+      { address, network },
     );
     return data;
   }
