@@ -3,6 +3,7 @@ import {
   clearClientAuthState,
   isAdminAuthArea,
   isIntentionalLogout,
+  isSessionEndedCode,
 } from "@/features/auth/lib/logout-client";
 import { resolveClientNetworkHeader } from "@/lib/client-network";
 import { getStoredNetwork } from "@/lib/client-storage";
@@ -54,7 +55,11 @@ http.interceptors.response.use(
       !isAdminAuthArea() &&
       !isIntentionalLogout()
     ) {
-      void clearClientAuthState({ reason: "unauthorized" });
+      void clearClientAuthState({
+        reason: isSessionEndedCode(apiError.code)
+          ? "session_expired"
+          : "unauthorized",
+      });
     }
 
     return Promise.reject(apiError);

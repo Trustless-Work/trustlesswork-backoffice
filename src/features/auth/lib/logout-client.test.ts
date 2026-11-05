@@ -1,5 +1,17 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+describe("isSessionEndedCode", () => {
+  it("recognizes expired and revoked sessions only", async () => {
+    const { isSessionEndedCode } = await import(
+      "@/features/auth/lib/logout-client"
+    );
+    expect(isSessionEndedCode("AUTH_SESSION_EXPIRED")).toBe(true);
+    expect(isSessionEndedCode("AUTH_SESSION_REVOKED")).toBe(true);
+    expect(isSessionEndedCode("AUTH_INVALID_CREDENTIAL")).toBe(false);
+    expect(isSessionEndedCode(undefined)).toBe(false);
+  });
+});
+
 describe("isAdminAuthArea", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
