@@ -6,8 +6,7 @@ import { parseRequestNetwork } from "@/helpers/request-network.helper";
 import { getSessionToken } from "@/lib/session";
 
 export async function GET(request: NextRequest) {
-  const network = parseRequestNetwork(request);
-  const token = await getSessionToken(network);
+  const token = await getSessionToken();
   if (!token) {
     return createUnauthorizedResponse();
   }

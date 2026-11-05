@@ -1,53 +1,51 @@
-import { NextRequest, NextResponse } from "next/server";
-import { coreFetch } from "@/lib/core-fetch";
-import {
-  clearSessionForNetwork,
-  getSession,
-  isSessionExpired,
-  readNetworkSession,
-} from "@/lib/session";
-import { parseRequestNetwork } from "@/helpers/request-network.helper";
+import { NextResponse } from "next/server";
+import { identitySessionFetch } from "@/lib/identity-fetch";
+import { clearSession, getSession, isSessionExpired } from "@/lib/session";
+import { proxyCoreResponse } from "@/lib/bff-utils";
 import type {
   SessionMeResponse,
   SessionStatusResponse,
   UserResponse,
 } from "@/features/auth/types/auth.types";
 
-export async function GET(request: NextRequest) {
-  const network = parseRequestNetwork(request);
+export async function GET() {
   const session = await getSession();
-  const current = readNetworkSession(session, network);
+  const { token, expiresAt } = session;
 
-  if (!current?.token || isSessionExpired(current.expiresAt)) {
-    if (current?.token) {
-      await clearSessionForNetwork(network);
+  if (!token || isSessionExpired(expiresAt)) {
+    if (token) {
+      await clearSession();
     }
 
     const body: SessionStatusResponse = {
       authenticated: false,
-      expiresAt: current?.expiresAt,
+      expiresAt,
     };
 
     return NextResponse.json(body);
   }
 
-  const meResponse = await coreFetch("/users/me", { network });
+  const meResponse = await identitySessionFetch("/users/me");
 
-  if (!meResponse.ok) {
-    await clearSessionForNetwork(network);
+  if (meResponse.status === 401) {
+    await clearSession();
 
     const body: SessionStatusResponse = {
       authenticated: false,
-      expiresAt: current.expiresAt,
+      expiresAt,
     };
 
-    return NextResponse.json(body, { status: meResponse.status });
+    return NextResponse.json(body);
+  }
+
+  if (!meResponse.ok) {
+    return proxyCoreResponse(meResponse);
   }
 
   const user = (await meResponse.json()) as UserResponse;
   const body: SessionMeResponse = {
     authenticated: true,
-    expiresAt: current.expiresAt,
+    expiresAt: expiresAt ?? "",
     user,
   };
 
