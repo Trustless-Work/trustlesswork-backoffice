@@ -70,7 +70,19 @@ export function isSessionMeResponse(value: unknown): value is SessionMeResponse 
   );
 }
 
-// ─── API key (registration response) ────────────────────────────────────────
+// ─── Registration ───────────────────────────────────────────────────────────
+
+export interface RegisteredSessionResponse extends SessionVerifyResponse {
+  userId: EntityId;
+}
+
+export interface RegisterVerifyResult {
+  success: true;
+  expiresAt: IsoDateTimeString;
+  organizationProvisioned: boolean;
+}
+
+// ─── API key ────────────────────────────────────────────────────────────────
 
 export interface GeneratedApiKeyResponse
   extends WithAccountRoles, Pick<WithEntityTimestamps, "createdAt"> {

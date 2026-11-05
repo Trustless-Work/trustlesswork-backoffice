@@ -1,7 +1,7 @@
 import http from "@/lib/http";
 import type {
-  GeneratedApiKeyResponse,
   RegisterProfileInput,
+  RegisterVerifyResult,
   Sep10Challenge,
   SessionChallengeResponse,
   SessionMeResponse,
@@ -44,8 +44,8 @@ export class AuthService {
     address: string,
     signedXdr: string,
     profile: RegisterProfileInput,
-  ): Promise<GeneratedApiKeyResponse> {
-    const { data: registerResult } = await http.post<GeneratedApiKeyResponse>(
+  ): Promise<RegisterVerifyResult> {
+    const { data } = await http.post<RegisterVerifyResult>(
       "/auth/register/verify",
       {
         address,
@@ -57,7 +57,7 @@ export class AuthService {
       },
     );
 
-    return registerResult;
+    return data;
   }
 
   async logout(): Promise<void> {

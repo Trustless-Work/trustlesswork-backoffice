@@ -5,10 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useWallet } from "@/components/tw-blocks/wallet-kit/useWallet";
-import {
-  signTransaction,
-  resetWalletKitLoader,
-} from "@/components/tw-blocks/wallet-kit/wallet-kit";
+import { signTransaction } from "@/components/tw-blocks/wallet-kit/wallet-kit";
 import { useWalletContext } from "@/providers/WalletProvider";
 import { authService } from "@/features/auth/services/auth.service";
 import type { RegisterProfileInput } from "@/features/auth/types/auth.types";
@@ -164,14 +161,18 @@ export function useWalletAuth() {
 
         setPhase("registering");
 
-        await authService.verifyRegister(address, signedXdr, profile);
+        const { organizationProvisioned } = await authService.verifyRegister(
+          address,
+          signedXdr,
+          profile,
+        );
 
         setNeedsRegister(false);
 
-        resetWalletKitLoader();
-        const loginResult = await performSessionLogin(address);
-        if (loginResult === "needs_register") {
-          throw new Error("Account was created but sign-in failed. Try again.");
+        if (!organizationProvisioned) {
+          toast.warning("We couldn't create your organization", {
+            description: "Your account is ready. Create it from Settings.",
+          });
         }
 
         await queryClient.invalidateQueries({ queryKey: ["session", "me"] });
@@ -204,7 +205,6 @@ export function useWalletAuth() {
     },
     [
       pendingAddress,
-      performSessionLogin,
       queryClient,
       redirectPath,
       router,
