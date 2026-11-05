@@ -80,7 +80,7 @@ export class AuthService {
   }
 
   async getMe(): Promise<UserResponse> {
-    const { data } = await http.get<UserResponse>("/core/users/me");
+    const { data } = await http.get<UserResponse>("/identity/users/me");
     return data;
   }
 }
