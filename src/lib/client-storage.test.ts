@@ -1,11 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   SOUND_EFFECTS_STORAGE_KEY,
+  getStoredNetwork,
   getStoredSoundEffectsEnabled,
+  setStoredNetwork,
   setStoredSoundEffectsEnabled,
 } from "@/lib/client-storage";
 
-describe("sound effects preference", () => {
+describe("client preferences", () => {
   const store = new Map<string, string>();
 
   beforeEach(() => {
@@ -34,6 +36,13 @@ describe("sound effects preference", () => {
 
   it("defaults to enabled when nothing is stored", () => {
     expect(getStoredSoundEffectsEnabled()).toBe(true);
+  });
+
+  it("stores the selected network", () => {
+    expect(getStoredNetwork()).toBe("testnet");
+
+    setStoredNetwork("mainnet");
+    expect(getStoredNetwork()).toBe("mainnet");
   });
 
   it("persists disabled and enabled values", () => {

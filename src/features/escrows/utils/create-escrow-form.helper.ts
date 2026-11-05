@@ -1,4 +1,4 @@
-import { trustlineOptions } from "@/components/tw-blocks/wallet-kit/trustlines";
+import { getTrustlineOptions } from "@/components/tw-blocks/wallet-kit/trustlines";
 import type {
   CreateEscrowFormData,
   CreateEscrowMilestoneFormData,
@@ -6,7 +6,15 @@ import type {
 } from "@/features/escrows/schemas/create-escrow.schema";
 import type { EscrowType } from "@/features/escrows/types/escrow.types";
 
-const defaultTrustline = trustlineOptions[0];
+function buildDefaultTrustline(): CreateEscrowFormData["trustline"] {
+  const option = getTrustlineOptions()[0];
+
+  return {
+    isCustom: false,
+    address: option?.value ?? "",
+    symbol: option?.label ?? "USDC",
+  };
+}
 
 export const TEMPLATE_DISPUTE_RESOLVER =
   "GCWTL5XN22BWFB6QSF4SKYKFQP3G3KTEHUFK7HR7CGRQJFVCO2WVXVLE";
@@ -36,11 +44,7 @@ export function getDefaultValues(
   walletAddress: string,
 ): CreateEscrowFormData {
   const roles = buildDefaultRoles(walletAddress);
-  const trustline = {
-    isCustom: false,
-    address: defaultTrustline?.value ?? "",
-    symbol: defaultTrustline?.label ?? "USDC",
-  };
+  const trustline = buildDefaultTrustline();
 
   if (type === "multi-release") {
     return {
@@ -92,11 +96,7 @@ export function buildTemplateValues(
     disputeResolvers: [TEMPLATE_DISPUTE_RESOLVER],
     admin: TEMPLATE_ADMIN,
   };
-  const trustline = {
-    isCustom: false,
-    address: defaultTrustline?.value ?? "",
-    symbol: defaultTrustline?.label ?? "USDC",
-  };
+  const trustline = buildDefaultTrustline();
 
   if (type === "multi-release") {
     return {

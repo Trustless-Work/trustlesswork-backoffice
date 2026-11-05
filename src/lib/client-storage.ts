@@ -22,6 +22,10 @@ export function getStoredNetwork(): NetworkType {
   return stored === "mainnet" ? "mainnet" : "testnet";
 }
 
+export function setStoredNetwork(network: NetworkType): void {
+  getClientStorage().setItem("network", network);
+}
+
 export const ACTIVE_ORGANIZATION_STORAGE_KEY = "activeOrganizationId";
 
 export function getStoredActiveOrganizationId(): string | null {
