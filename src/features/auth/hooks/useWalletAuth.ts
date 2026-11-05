@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useWallet } from "@/components/tw-blocks/wallet-kit/useWallet";
 import {
   getChallengeNetwork,
+  getWalletNetwork,
   signTransaction,
 } from "@/components/tw-blocks/wallet-kit/wallet-kit";
 import { useWalletContext } from "@/providers/WalletProvider";
@@ -14,8 +15,10 @@ import { authService } from "@/features/auth/services/auth.service";
 import type { RegisterProfileInput } from "@/features/auth/types/auth.types";
 import { isRegisteredSessionChallenge } from "@/features/auth/types/auth.types";
 import { clearClientAuthState } from "@/features/auth/lib/logout-client";
+import { sanitizeLoginRedirect } from "@/features/auth/lib/login-redirect";
 import { markOnboardingPending } from "@/features/onboarding/lib/onboarding-storage";
 import { parseApiError } from "@/lib/api-error";
+import { getStoredNetwork, setStoredNetwork } from "@/lib/client-storage";
 
 export type WalletAuthPhase =
   | "idle"
@@ -43,7 +46,7 @@ export function useWalletAuth() {
   const [needsRegister, setNeedsRegister] = useState(false);
   const [pendingAddress, setPendingAddress] = useState<string | null>(null);
 
-  const redirectPath = searchParams.get("redirect") ?? "/dashboard";
+  const redirectPath = sanitizeLoginRedirect(searchParams.get("redirect"));
   const sessionExpiredReason = searchParams.get("reason") === "session_expired";
 
   useEffect(() => {
@@ -57,6 +60,19 @@ export function useWalletAuth() {
     });
     clearWalletInfo();
   }, [clearWalletInfo, sessionExpiredReason]);
+
+  const enterApp = useCallback(async () => {
+    const walletNetwork = await getWalletNetwork();
+
+    if (walletNetwork && walletNetwork !== getStoredNetwork()) {
+      setStoredNetwork(walletNetwork);
+      // Providers read the network on load, so they need a full page load.
+      window.location.assign(redirectPath);
+      return;
+    }
+
+    router.push(redirectPath);
+  }, [redirectPath, router]);
 
   const performSessionLogin = useCallback(
     async (address: string): Promise<"authenticated" | "needs_register"> => {
@@ -125,7 +141,7 @@ export function useWalletAuth() {
         },
       );
       setPhase("idle");
-      router.push(redirectPath);
+      await enterApp();
     } catch (error) {
       if (isWalletModalDismissed(error)) {
         setPhase("idle");
@@ -138,10 +154,9 @@ export function useWalletAuth() {
   }, [
     connectWallet,
     disconnectWallet,
+    enterApp,
     performSessionLogin,
     queryClient,
-    redirectPath,
-    router,
     sessionExpiredReason,
     showRegistrationFlow,
     walletAddress,
@@ -199,7 +214,7 @@ export function useWalletAuth() {
 
         setPhase("idle");
         markOnboardingPending();
-        router.push(redirectPath);
+        await enterApp();
       } catch (error) {
         if (isWalletModalDismissed(error)) {
           setPhase("idle");
@@ -212,10 +227,9 @@ export function useWalletAuth() {
       }
     },
     [
+      enterApp,
       pendingAddress,
       queryClient,
-      redirectPath,
-      router,
       walletAddress,
     ],
   );

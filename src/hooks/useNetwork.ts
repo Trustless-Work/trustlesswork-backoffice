@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { getClientStorage, getStoredNetwork } from "@/lib/client-storage";
+import { getStoredNetwork, setStoredNetwork } from "@/lib/client-storage";
 import type { NetworkType } from "@/types/network.entity";
 
 const useNetwork = () => {
@@ -15,7 +15,7 @@ const useNetwork = () => {
 
     setIsReseting(true);
     setNetwork(newNetwork);
-    getClientStorage().setItem("network", newNetwork);
+    setStoredNetwork(newNetwork);
 
     setTimeout(() => {
       setIsReseting(false);
