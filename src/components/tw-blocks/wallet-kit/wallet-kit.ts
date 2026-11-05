@@ -1,6 +1,7 @@
 import { clientEnv } from "@/lib/env";
 import type { ModuleInterface } from "@creit-tech/stellar-wallets-kit/types";
 import {
+  networkFromPassphrase,
   resolveChallengeNetwork,
   type ChallengeNetwork,
 } from "@/features/auth/lib/challenge-network";
@@ -184,16 +185,23 @@ export const disconnectWalletKitSafe = async (): Promise<void> => {
   }
 };
 
-export const getChallengeNetwork = async (): Promise<ChallengeNetwork> => {
+const getWalletPassphrase = async (): Promise<string | undefined> => {
   const { StellarWalletsKit } = await loadWalletKit();
 
-  // Not every wallet module can report its network.
-  const walletPassphrase = await StellarWalletsKit.getNetwork()
-    .then(({ networkPassphrase }) => networkPassphrase)
-    .catch(() => undefined);
-
-  return resolveChallengeNetwork(walletPassphrase, getStoredNetwork());
+  // Only some wallets can report their network, and one may not be selected.
+  try {
+    const { networkPassphrase } = await StellarWalletsKit.getNetwork();
+    return networkPassphrase;
+  } catch {
+    return undefined;
+  }
 };
+
+export const getWalletNetwork = async (): Promise<NetworkType | undefined> =>
+  networkFromPassphrase(await getWalletPassphrase());
+
+export const getChallengeNetwork = async (): Promise<ChallengeNetwork> =>
+  resolveChallengeNetwork(await getWalletPassphrase(), getStoredNetwork());
 
 /**
  * Helper to sign a transaction XDR with the active wallet.

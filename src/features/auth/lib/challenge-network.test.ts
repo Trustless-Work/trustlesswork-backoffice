@@ -1,8 +1,23 @@
 import { describe, expect, it } from "vitest";
-import { resolveChallengeNetwork } from "@/features/auth/lib/challenge-network";
+import {
+  networkFromPassphrase,
+  resolveChallengeNetwork,
+} from "@/features/auth/lib/challenge-network";
 
 const PUBLIC_PASSPHRASE = "Public Global Stellar Network ; September 2015";
 const TESTNET_PASSPHRASE = "Test SDF Network ; September 2015";
+
+describe("networkFromPassphrase", () => {
+  it("maps the known passphrases", () => {
+    expect(networkFromPassphrase(PUBLIC_PASSPHRASE)).toBe("mainnet");
+    expect(networkFromPassphrase(TESTNET_PASSPHRASE)).toBe("testnet");
+  });
+
+  it("returns undefined when the network is unknown", () => {
+    expect(networkFromPassphrase("Some Other Network")).toBeUndefined();
+    expect(networkFromPassphrase(undefined)).toBeUndefined();
+  });
+});
 
 describe("resolveChallengeNetwork", () => {
   it("follows the wallet even when the app is on the other network", () => {
