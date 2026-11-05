@@ -1,5 +1,9 @@
 import { clientEnv } from "@/lib/env";
 import type { ModuleInterface } from "@creit-tech/stellar-wallets-kit/types";
+import {
+  resolveChallengeNetwork,
+  type ChallengeNetwork,
+} from "@/features/auth/lib/challenge-network";
 import { getStoredNetwork } from "@/lib/client-storage";
 import type { NetworkType } from "@/types/network.entity";
 import { resolveWalletKitTheme } from "./wallet-kit-theme";
@@ -178,6 +182,17 @@ export const disconnectWalletKitSafe = async (): Promise<void> => {
   } catch {
     // Wallet kit may not be initialized or already disconnected.
   }
+};
+
+export const getChallengeNetwork = async (): Promise<ChallengeNetwork> => {
+  const { StellarWalletsKit } = await loadWalletKit();
+
+  // Not every wallet module can report its network.
+  const walletPassphrase = await StellarWalletsKit.getNetwork()
+    .then(({ networkPassphrase }) => networkPassphrase)
+    .catch(() => undefined);
+
+  return resolveChallengeNetwork(walletPassphrase, getStoredNetwork());
 };
 
 /**

@@ -16,6 +16,15 @@ type ClearClientAuthStateOptions = {
   redirectTo?: string;
 };
 
+const SESSION_ENDED_CODES = new Set([
+  "AUTH_SESSION_EXPIRED",
+  "AUTH_SESSION_REVOKED",
+]);
+
+export function isSessionEndedCode(code: string | undefined): boolean {
+  return code !== undefined && SESSION_ENDED_CODES.has(code);
+}
+
 let intentionalLogout = false;
 
 export function beginIntentionalLogout(): void {

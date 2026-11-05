@@ -20,6 +20,14 @@ export class ApiEnv {
     });
   }
 
+  get identityApiUrl(): string {
+    return this.config.IDENTITY_API_URL.replace(/\/$/, "");
+  }
+
+  get identityOperatorToken(): string | undefined {
+    return this.config.IDENTITY_OPERATOR_TOKEN?.trim() || undefined;
+  }
+
   get adminApiKey(): string | undefined {
     return this.adminApiKeyFor("testnet");
   }

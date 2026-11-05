@@ -1,12 +1,13 @@
 import { NextRequest } from "next/server";
-import { adminFetch } from "@/lib/admin-fetch";
-import { coreFetch } from "@/lib/core-fetch";
+import {
+  identityOperatorFetch,
+  identitySessionFetch,
+} from "@/lib/identity-fetch";
 import {
   parseJsonBody,
   proxyCoreResponse,
   validateSameOrigin,
 } from "@/lib/bff-utils";
-import { parseRequestNetwork } from "@/helpers/request-network.helper";
 import type { UpdateProfileInput } from "@/features/settings/schemas/profile.schema";
 import type { UserResponse } from "@/types";
 
@@ -16,8 +17,7 @@ export async function PATCH(request: NextRequest) {
     return csrfError;
   }
 
-  const network = parseRequestNetwork(request);
-  const meResponse = await coreFetch("/users/me", { network });
+  const meResponse = await identitySessionFetch("/users/me");
   if (!meResponse.ok) {
     return proxyCoreResponse(meResponse);
   }
@@ -54,10 +54,9 @@ export async function PATCH(request: NextRequest) {
     profilePayload.email = email;
   }
 
-  const profileResponse = await adminFetch(`/admin/users/${me.id}`, {
+  const profileResponse = await identityOperatorFetch(`/admin/users/${me.id}`, {
     method: "PATCH",
     body: JSON.stringify(profilePayload),
-    network,
   });
 
   return proxyCoreResponse(profileResponse);

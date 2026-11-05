@@ -6,6 +6,9 @@ export const serverEnvSchema = createEnv({
     SESSION_SECRET: z.string().min(32),
     CORE_API_URL: z.string().url(),
     CORE_API_URL_MAINNET: z.string().url().optional(),
+    IDENTITY_API_URL: z.string().url(),
+    // Must never reach the browser.
+    IDENTITY_OPERATOR_TOKEN: z.string().min(1).optional(),
     BACKOFFICE_ADMIN_API_KEY: z.string().min(1).optional(),
     BACKOFFICE_ADMIN_API_KEY_MAINNET: z.string().min(1).optional(),
     // ESCROW_MANAGER key scoped to NEXT_PUBLIC_PAYROLL_PLATFORM_ID.
@@ -29,6 +32,8 @@ export const serverEnvSchema = createEnv({
     SESSION_SECRET: process.env.SESSION_SECRET,
     CORE_API_URL: process.env.CORE_API_URL,
     CORE_API_URL_MAINNET: process.env.CORE_API_URL_MAINNET,
+    IDENTITY_API_URL: process.env.IDENTITY_API_URL,
+    IDENTITY_OPERATOR_TOKEN: process.env.IDENTITY_OPERATOR_TOKEN,
     BACKOFFICE_ADMIN_API_KEY: process.env.BACKOFFICE_ADMIN_API_KEY,
     BACKOFFICE_ADMIN_API_KEY_MAINNET:
       process.env.BACKOFFICE_ADMIN_API_KEY_MAINNET,

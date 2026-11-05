@@ -45,7 +45,7 @@ async function handleDashboardRequest(
     if (!hasUsableSession(session)) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", request.nextUrl.pathname);
-      if (session.token || session.byNetwork) {
+      if (session.token) {
         loginUrl.searchParams.set("reason", "session_expired");
       }
       const response = NextResponse.redirect(loginUrl);

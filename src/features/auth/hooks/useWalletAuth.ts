@@ -6,8 +6,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useWallet } from "@/components/tw-blocks/wallet-kit/useWallet";
 import {
+  getChallengeNetwork,
   signTransaction,
-  resetWalletKitLoader,
 } from "@/components/tw-blocks/wallet-kit/wallet-kit";
 import { useWalletContext } from "@/providers/WalletProvider";
 import { authService } from "@/features/auth/services/auth.service";
@@ -60,8 +60,10 @@ export function useWalletAuth() {
 
   const performSessionLogin = useCallback(
     async (address: string): Promise<"authenticated" | "needs_register"> => {
-      const challengeResult =
-        await authService.requestSessionChallenge(address);
+      const challengeResult = await authService.requestSessionChallenge(
+        address,
+        await getChallengeNetwork(),
+      );
 
       if (!isRegisteredSessionChallenge(challengeResult)) {
         return "needs_register";
@@ -155,7 +157,10 @@ export function useWalletAuth() {
 
       try {
         setPhase("signing");
-        const challenge = await authService.requestRegisterChallenge(address);
+        const challenge = await authService.requestRegisterChallenge(
+          address,
+          await getChallengeNetwork(),
+        );
         const signedXdr = await signTransaction({
           unsignedTransaction: challenge.xdr,
           address,
@@ -164,14 +169,18 @@ export function useWalletAuth() {
 
         setPhase("registering");
 
-        await authService.verifyRegister(address, signedXdr, profile);
+        const { organizationProvisioned } = await authService.verifyRegister(
+          address,
+          signedXdr,
+          profile,
+        );
 
         setNeedsRegister(false);
 
-        resetWalletKitLoader();
-        const loginResult = await performSessionLogin(address);
-        if (loginResult === "needs_register") {
-          throw new Error("Account was created but sign-in failed. Try again.");
+        if (!organizationProvisioned) {
+          toast.warning("We couldn't create your organization", {
+            description: "Your account is ready. Create it from Settings.",
+          });
         }
 
         await queryClient.invalidateQueries({ queryKey: ["session", "me"] });
@@ -204,7 +213,6 @@ export function useWalletAuth() {
     },
     [
       pendingAddress,
-      performSessionLogin,
       queryClient,
       redirectPath,
       router,

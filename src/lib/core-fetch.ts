@@ -38,7 +38,7 @@ export async function coreFetch(
   bearer?: string,
 ): Promise<Response> {
   const { network = "testnet", ...fetchInit } = init ?? {};
-  const token = bearer ?? (await getSessionToken(network));
+  const token = bearer ?? (await getSessionToken());
   if (!token) {
     return createUnauthorizedResponse();
   }

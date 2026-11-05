@@ -5,8 +5,13 @@ or sign-out paths.
 
 | Area         | Mechanism                              | Cookie                         |
 | ------------ | -------------------------------------- | ------------------------------ |
-| `/dashboard` | Stellar wallet SEP-10 via the core API | `tw_session` (iron-session)    |
+| `/dashboard` | Stellar wallet SEP-10 via the identity service | `tw_session` (iron-session) |
 | `/admin`     | Supabase email + password + TOTP       | `sb-<project-ref>-auth-token*` |
+
+`/dashboard` holds one identity session token, accepted by every core; switching
+network changes the target core, never the credential. It needs two server-only
+variables: `IDENTITY_API_URL` (required) and `IDENTITY_OPERATOR_TOKEN`, the machine
+credential for register and login. The token must never reach the browser.
 
 `/admin` requires **all** of the following, on every request:
 

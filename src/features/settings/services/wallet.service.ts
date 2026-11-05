@@ -1,4 +1,5 @@
 import http from "@/lib/http";
+import type { ChallengeNetwork } from "@/features/auth/lib/challenge-network";
 import type { Sep10Challenge } from "@/types";
 import type {
   UserWalletResponse,
@@ -17,7 +18,7 @@ export class WalletService {
     params: KeysetListParams = {},
   ): Promise<KeysetPage<UserWalletResponse>> {
     const { data } = await http.get<unknown>(
-      `/core/users/me/wallets${buildKeysetQuery(params)}`,
+      `/identity/users/me/wallets${buildKeysetQuery(params)}`,
     );
     return parseKeysetPageWithSchema(userWalletResponseSchema, data);
   }
@@ -26,10 +27,13 @@ export class WalletService {
     return fetchAllKeysetPages((params) => this.listWalletsPage(params));
   }
 
-  async requestLinkChallenge(address: string): Promise<Sep10Challenge> {
+  async requestLinkChallenge(
+    address: string,
+    network: ChallengeNetwork,
+  ): Promise<Sep10Challenge> {
     const { data } = await http.post<Sep10Challenge>(
-      "/core/wallets/link/challenge",
-      { address },
+      "/identity/wallets/link/challenge",
+      { address, network },
     );
     return data;
   }
@@ -39,14 +43,14 @@ export class WalletService {
     signedXdr: string,
   ): Promise<WalletLinkVerifyResponse> {
     const { data } = await http.post<WalletLinkVerifyResponse>(
-      "/core/wallets/link/verify",
+      "/identity/wallets/link/verify",
       { address, signedXdr },
     );
     return data;
   }
 
   async unlinkWallet(address: string): Promise<void> {
-    await http.delete(`/core/users/me/wallets/${encodeURIComponent(address)}`);
+    await http.delete(`/identity/users/me/wallets/${encodeURIComponent(address)}`);
   }
 }
 

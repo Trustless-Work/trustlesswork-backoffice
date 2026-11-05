@@ -1,7 +1,8 @@
 import http from "@/lib/http";
+import type { ChallengeNetwork } from "@/features/auth/lib/challenge-network";
 import type {
-  GeneratedApiKeyResponse,
   RegisterProfileInput,
+  RegisterVerifyResult,
   Sep10Challenge,
   SessionChallengeResponse,
   SessionMeResponse,
@@ -13,10 +14,11 @@ import type {
 export class AuthService {
   async requestSessionChallenge(
     address: string,
+    network: ChallengeNetwork,
   ): Promise<SessionChallengeResponse> {
     const { data } = await http.post<SessionChallengeResponse>(
       "/auth/session/challenge",
-      { address },
+      { address, network },
     );
     return data;
   }
@@ -32,10 +34,13 @@ export class AuthService {
     return { token: "", expiresAt: data.expiresAt };
   }
 
-  async requestRegisterChallenge(address: string): Promise<Sep10Challenge> {
+  async requestRegisterChallenge(
+    address: string,
+    network: ChallengeNetwork,
+  ): Promise<Sep10Challenge> {
     const { data } = await http.post<Sep10Challenge>(
       "/auth/register/challenge",
-      { address },
+      { address, network },
     );
     return data;
   }
@@ -44,8 +49,8 @@ export class AuthService {
     address: string,
     signedXdr: string,
     profile: RegisterProfileInput,
-  ): Promise<GeneratedApiKeyResponse> {
-    const { data: registerResult } = await http.post<GeneratedApiKeyResponse>(
+  ): Promise<RegisterVerifyResult> {
+    const { data } = await http.post<RegisterVerifyResult>(
       "/auth/register/verify",
       {
         address,
@@ -57,7 +62,7 @@ export class AuthService {
       },
     );
 
-    return registerResult;
+    return data;
   }
 
   async logout(): Promise<void> {
@@ -80,7 +85,7 @@ export class AuthService {
   }
 
   async getMe(): Promise<UserResponse> {
-    const { data } = await http.get<UserResponse>("/core/users/me");
+    const { data } = await http.get<UserResponse>("/identity/users/me");
     return data;
   }
 }

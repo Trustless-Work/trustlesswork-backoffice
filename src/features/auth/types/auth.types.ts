@@ -30,6 +30,8 @@ import type {
   UserResponse,
 } from "@/types";
 
+import type { ChallengeNetwork } from "@/features/auth/lib/challenge-network";
+
 // ─── Session auth ───────────────────────────────────────────────────────────
 
 export interface SessionVerifyResponse {
@@ -70,7 +72,19 @@ export function isSessionMeResponse(value: unknown): value is SessionMeResponse 
   );
 }
 
-// ─── API key (registration response) ────────────────────────────────────────
+// ─── Registration ───────────────────────────────────────────────────────────
+
+export interface RegisteredSessionResponse extends SessionVerifyResponse {
+  userId: EntityId;
+}
+
+export interface RegisterVerifyResult {
+  success: true;
+  expiresAt: IsoDateTimeString;
+  organizationProvisioned: boolean;
+}
+
+// ─── API key ────────────────────────────────────────────────────────────────
 
 export interface GeneratedApiKeyResponse
   extends WithAccountRoles, Pick<WithEntityTimestamps, "createdAt"> {
@@ -92,9 +106,11 @@ export type RegisterProfileInput = Required<
 
 export interface AuthChallengeRequest {
   address: StellarAddress;
+  network?: ChallengeNetwork;
 }
 
-export interface AuthVerifyRequest extends AuthChallengeRequest {
+export interface AuthVerifyRequest {
+  address: StellarAddress;
   signedXdr: string;
 }
 
