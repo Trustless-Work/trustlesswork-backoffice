@@ -1,3 +1,6 @@
+import { getStoredNetwork } from "@/lib/client-storage";
+import type { NetworkType } from "@/types/network.entity";
+
 /**
  * Trustlines | Non-Native Tokens from Stellar (Soroban SAC contract ids)
  *
@@ -19,14 +22,13 @@ export const trustlines = [
   },
 ];
 
-// TODO: add network dynamic filter
-export const trustlineOptions = Array.from(
-  new Map(
-    trustlines
-      .filter((trustline) => trustline.network === "testnet")
-      .map((trustline) => [
-        trustline.address,
-        { value: trustline.address, label: trustline.symbol },
-      ]),
-  ).values(),
-);
+export function getTrustlineOptions(
+  network: NetworkType = getStoredNetwork(),
+): { value: string; label: string }[] {
+  return trustlines
+    .filter((trustline) => trustline.network === network)
+    .map((trustline) => ({
+      value: trustline.address,
+      label: trustline.symbol,
+    }));
+}

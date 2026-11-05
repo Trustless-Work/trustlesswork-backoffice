@@ -105,6 +105,19 @@ describe("payroll-payload.helper", () => {
     expect(payload.milestones.every((m) => m.receiver === signer)).toBe(true);
   });
 
+  it("uses the USDC trustline of the payroll's network", () => {
+    const contractIdOn = (network: "testnet" | "mainnet") =>
+      toPayrollDeployPayload(formValues, signer, "GRESOLVER", network).trustline
+        .contractId;
+
+    expect(contractIdOn("testnet")).toBe(
+      "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+    );
+    expect(contractIdOn("mainnet")).toBe(
+      "CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75",
+    );
+  });
+
   it("sums salary plus 1 USDC test per included member", () => {
     expect(getPayrollRunTotal(formValues)).toBe(2500);
   });

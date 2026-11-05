@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { trustlineOptions } from "@/components/tw-blocks/wallet-kit/trustlines";
+import { getTrustlineOptions } from "@/components/tw-blocks/wallet-kit/trustlines";
 import { CREATE_ESCROW_PLACEHOLDERS } from "@/features/escrows/constants/create-escrow.constants";
 import type { CreateEscrowFormData } from "@/features/escrows/schemas/create-escrow.schema";
 
@@ -28,7 +28,7 @@ type EscrowTrustlineFieldProps = {
 };
 
 function getDefaultPresetTrustline() {
-  const option = trustlineOptions[0];
+  const option = getTrustlineOptions()[0];
 
   return {
     address: option?.value ?? "",
@@ -127,7 +127,7 @@ export const EscrowTrustlineAddressField = ({
               disabled={disabled}
               value={field.value}
               onValueChange={(value) => {
-                const option = trustlineOptions.find(
+                const option = getTrustlineOptions().find(
                   (item) => item.value === value,
                 );
                 field.onChange(value);
@@ -144,7 +144,7 @@ export const EscrowTrustlineAddressField = ({
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                {trustlineOptions.map((option) => (
+                {getTrustlineOptions().map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
                   </SelectItem>

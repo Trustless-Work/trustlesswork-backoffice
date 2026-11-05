@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type {
   StoredMultiReleaseEscrow,
   StoredSingleReleaseEscrow,
@@ -115,6 +115,20 @@ describe("buildUpdateEscrowDefaultValues", () => {
       "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
     );
     expect(defaults.trustline.symbol).toBe("USDC");
+  });
+
+  it("uses the preset for a mainnet USDC escrow while on mainnet", () => {
+    vi.stubGlobal("window", {
+      localStorage: { getItem: () => "mainnet" },
+    });
+    const escrow = createSingleEscrow();
+    escrow.trustline.contractId =
+      "CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75";
+
+    const defaults = buildUpdateEscrowDefaultValues(escrow);
+    vi.unstubAllGlobals();
+
+    expect(defaults.trustline.isCustom).toBe(false);
   });
 
   it("omits amount for multi-release escrows", () => {

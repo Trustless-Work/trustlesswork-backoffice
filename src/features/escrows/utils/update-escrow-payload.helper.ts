@@ -5,7 +5,7 @@ import type {
   UpdateMultiReleaseEscrowPayload,
   UpdateSingleReleaseEscrowPayload,
 } from "@trustless-work/escrow";
-import { trustlineOptions } from "@/components/tw-blocks/wallet-kit/trustlines";
+import { getTrustlineOptions } from "@/components/tw-blocks/wallet-kit/trustlines";
 import type { UpdateEscrowFormData } from "@/features/escrows/schemas/escrow-action.schemas";
 import type {
   StoredEscrow,
@@ -30,7 +30,7 @@ function buildTrustlineDefaults(escrow: StoredEscrow): {
       typeof value === "string" && value.trim().length > 0,
   );
 
-  const matched = trustlineOptions.find((option) =>
+  const matched = getTrustlineOptions().find((option) =>
     candidates.some((candidate) => candidate === option.value),
   );
 

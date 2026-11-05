@@ -1,5 +1,5 @@
 import type { DeployMultiReleaseEscrowPayload } from "@trustless-work/escrow";
-import { trustlineOptions } from "@/components/tw-blocks/wallet-kit/trustlines";
+import { getTrustlineOptions } from "@/components/tw-blocks/wallet-kit/trustlines";
 import {
   PAYROLL_PLATFORM_FEE,
   PAYROLL_TEST_MILESTONE_AMOUNT,
@@ -21,8 +21,6 @@ import {
 import { getStoredNetwork } from "@/lib/client-storage";
 import { clientEnv } from "@/lib/env";
 import type { NetworkType } from "@/types/network.entity";
-
-const defaultTrustline = trustlineOptions[0];
 
 type PayrollRolesOptions = {
   readonly adminAddress?: string;
@@ -87,6 +85,7 @@ export function toPayrollDeployPayload(
   };
 
   const included = values.members.filter((member) => member.include);
+  const defaultTrustline = getTrustlineOptions(network)[0];
 
   const milestones = included.flatMap((member) => [
     {
