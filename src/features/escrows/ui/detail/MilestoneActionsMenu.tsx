@@ -4,6 +4,7 @@ import {
   BadgeCheck,
   CircleDollarSign,
   Gavel,
+  Globe,
   ListChecks,
   MoreHorizontal,
   ShieldAlert,
@@ -22,6 +23,7 @@ import type { StoredEscrow } from "@/features/escrows/types/escrow.types";
 import { ApproveAndReleaseAction } from "@/features/escrows/ui/actions/ApproveAndReleaseAction";
 import { ApproveMilestoneAction } from "@/features/escrows/ui/actions/ApproveMilestoneAction";
 import { ChangeMilestoneStatusAction } from "@/features/escrows/ui/actions/ChangeMilestoneStatusAction";
+import { PayoutPreferenceAction } from "@/features/escrows/ui/actions/PayoutPreferenceAction";
 import { ReleaseFundsAction } from "@/features/escrows/ui/actions/ReleaseFundsAction";
 import { ResolveDisputeAction } from "@/features/escrows/ui/actions/ResolveDisputeAction";
 import { StartDisputeAction } from "@/features/escrows/ui/actions/StartDisputeAction";
@@ -49,12 +51,18 @@ export const MilestoneActionsMenu = ({
   const showRelease = policy.canReleaseMilestone(milestoneIndex);
   const showDispute = policy.canDisputeMilestone(milestoneIndex);
   const showResolve = policy.canResolveMilestoneDispute(milestoneIndex);
+  const showPayoutPreference =
+    policy.canManagePayoutPreference(milestoneIndex);
 
   const hasPrimaryActions = showApprove || showChangeStatus;
   const hasReleaseActions = showApproveAndRelease || showRelease;
   const hasDisputeActions = showDispute || showResolve;
+  const hasPayoutActions = showPayoutPreference;
   const hasAnyActions =
-    hasPrimaryActions || hasReleaseActions || hasDisputeActions;
+    hasPrimaryActions ||
+    hasReleaseActions ||
+    hasDisputeActions ||
+    hasPayoutActions;
 
   return (
     <DropdownMenu>
@@ -120,6 +128,17 @@ export const MilestoneActionsMenu = ({
               ) : null}
               {showResolve ? (
                 <ResolveDisputeAction {...milestoneProps} icon={Gavel} />
+              ) : null}
+            </>
+          ) : null}
+
+          {hasPayoutActions ? (
+            <>
+              {hasPrimaryActions || hasReleaseActions || hasDisputeActions ? (
+                <DropdownMenuSeparator />
+              ) : null}
+              {showPayoutPreference ? (
+                <PayoutPreferenceAction {...milestoneProps} icon={Globe} />
               ) : null}
             </>
           ) : null}
