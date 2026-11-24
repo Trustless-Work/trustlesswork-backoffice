@@ -1,10 +1,14 @@
 import type { EscrowRoleContext } from "@/features/escrows/domain/escrow-role-context";
-import type { StoredEscrow } from "@/features/escrows/types/escrow.types";
+import {
+  isStoredSingleReleaseEscrow,
+  type StoredEscrow,
+} from "@/features/escrows/types/escrow.types";
 import {
   hasApproverAlreadyApproved,
   isMilestoneApproved,
   isMilestoneDisputed,
   isMilestoneReleased,
+  isMilestoneTerminal,
 } from "@/features/escrows/utils/escrow-milestone.helper";
 
 export abstract class EscrowActionPolicy {
@@ -70,8 +74,41 @@ export abstract class EscrowActionPolicy {
 
   abstract canResolveMilestoneDispute(milestoneIndex: number): boolean;
 
+  /**
+   * Whether the wallet can manage the CCTP payout preference for this escrow
+   * (omit `milestoneIndex`) or milestone (pass it). Receiver-only, and hidden
+   * once released or resolved (the payout can no longer change).
+   */
+  canManagePayoutPreference(milestoneIndex?: number): boolean {
+    if (milestoneIndex === undefined) {
+      if (!this.roles.isEscrowReceiver()) {
+        return false;
+      }
+
+      return !this.isEscrowReleasedOrResolved();
+    }
+
+    if (!this.roles.isMilestoneReceiver(milestoneIndex)) {
+      return false;
+    }
+
+    const milestone = this.getMilestone(milestoneIndex);
+    return milestone !== null && !isMilestoneTerminal(milestone);
+  }
+
   protected getMilestone(milestoneIndex: number) {
     return this.escrow.milestones[milestoneIndex] ?? null;
+  }
+
+  /** Single-release only: released or its dispute is resolved (terminal). */
+  private isEscrowReleasedOrResolved(): boolean {
+    if (!isStoredSingleReleaseEscrow(this.escrow)) {
+      return false;
+    }
+
+    return (
+      this.escrow.released === true || this.escrow.dispute?.resolved === true
+    );
   }
 
   protected hasPositiveBalance(): boolean {

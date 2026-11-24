@@ -9,6 +9,7 @@ import {
   CircleDollarSign,
   Coins,
   Gavel,
+  Globe,
   ListTree,
   ShieldAlert,
   Wallet,
@@ -18,6 +19,7 @@ import { useEscrowActionPolicy } from "@/features/escrows/hooks/useEscrowActionP
 import type { StoredEscrow } from "@/features/escrows/types/escrow.types";
 import { FundEscrowAction } from "@/features/escrows/ui/actions/FundEscrowAction";
 import { ManageMilestonesAction } from "@/features/escrows/ui/actions/ManageMilestonesAction";
+import { PayoutPreferenceAction } from "@/features/escrows/ui/actions/PayoutPreferenceAction";
 import { ReleaseFundsAction } from "@/features/escrows/ui/actions/ReleaseFundsAction";
 import { ResolveDisputeAction } from "@/features/escrows/ui/actions/ResolveDisputeAction";
 import { StartDisputeAction } from "@/features/escrows/ui/actions/StartDisputeAction";
@@ -162,10 +164,15 @@ export const EscrowGeneralActions = ({ escrow }: EscrowGeneralActionsProps) => {
   const showRelease = policy.canReleaseEscrow();
   const showDispute = policy.canDisputeEscrow();
   const showResolve = policy.canResolveEscrowDispute();
+  // No milestoneIndex here: this is escrow-wide, single-release only —
+  // resolves to false on multi-release, where it's per-milestone instead
+  // (see MilestoneActionsMenu).
+  const showPayoutPreference = policy.canManagePayoutPreference();
 
   const hasFundingGroup = showFund || showWithdraw;
   const hasConfigurationGroup = showUpdate || showManageMilestones;
   const hasReleasesGroup = showRelease || showDispute || showResolve;
+  const hasPayoutGroup = showPayoutPreference;
 
   return (
     <aside className="flex flex-col gap-4">
@@ -239,6 +246,24 @@ export const EscrowGeneralActions = ({ escrow }: EscrowGeneralActionsProps) => {
           ) : null}
           {showResolve ? (
             <ResolveDisputeAction escrow={escrow} icon={Gavel} />
+          ) : null}
+        </ActionGroup>
+      ) : null}
+
+      {hasPayoutGroup ? (
+        <ActionGroup
+          id="payout"
+          title="Payout Preference"
+          description="Choose how you receive funds when this escrow releases."
+          open={openGroup === "payout"}
+          onToggle={handleToggleGroup}
+        >
+          {showPayoutPreference ? (
+            <PayoutPreferenceAction
+              escrow={escrow}
+              triggerVariant="secondary"
+              icon={Globe}
+            />
           ) : null}
         </ActionGroup>
       ) : null}
