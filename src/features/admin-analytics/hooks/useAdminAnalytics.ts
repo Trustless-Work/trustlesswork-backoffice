@@ -289,18 +289,3 @@ export function useApiKeyDetail(
       : null,
   };
 }
-
-export function useDataQuality() {
-  const query = useQuery({
-    queryKey: adminAnalyticsQueryKey("data-quality", networkQueryKey()),
-    queryFn: () => adminAnalyticsService.getDataQuality(),
-    ...sharedQueryOptions,
-  });
-
-  return {
-    ...query,
-    errorMessage: query.error
-      ? getAdminAnalyticsErrorMessage(query.error)
-      : null,
-  };
-}

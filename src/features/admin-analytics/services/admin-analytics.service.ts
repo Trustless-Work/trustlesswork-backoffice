@@ -16,7 +16,6 @@ import {
   volumeVsFeesResponseSchema,
 } from "@/features/admin-analytics/schemas/analytics-v2.schema";
 import {
-  dataQualityResponseSchema,
   escrowGrowthResponseSchema,
   revenueByTokenResponseSchema,
   revenueEventsResponseSchema,
@@ -35,7 +34,6 @@ import type {
   VolumeVsFeesResponse,
 } from "@/features/admin-analytics/types/analytics-v2.types";
 import type {
-  DataQualityResponse,
   EscrowGrowthResponse,
   RevenueByTokenResponse,
   RevenueEventsQuery,
@@ -188,13 +186,6 @@ export const adminAnalyticsService = {
       { params: rangeParams(range) },
     );
     return apiKeyDetailResponseSchema.parse(data);
-  },
-
-  async getDataQuality(): Promise<DataQualityResponse> {
-    const { data } = await adminHttp.get<unknown>(
-      `${ANALYTICS_BASE}/data-quality`,
-    );
-    return dataQualityResponseSchema.parse(data);
   },
 };
 

@@ -11,14 +11,12 @@ import type {
   ApiKeysTopBy,
   EscrowsTopBy,
 } from "@/features/admin-analytics/types/analytics-v2.types";
-import { useDataQuality } from "@/features/admin-analytics/hooks/useAdminAnalytics";
 import { useRevenueFilters } from "@/features/admin-analytics/hooks/useRevenueFilters";
 import { AdminAnalyticsSkeleton } from "@/features/admin-analytics/ui/AdminAnalyticsSkeleton";
 import {
   AnalyticsTabs,
   resolveAnalyticsTab,
 } from "@/features/admin-analytics/ui/AnalyticsTabs";
-import { DataQualityBanner } from "@/features/admin-analytics/ui/DataQualityBanner";
 import { ApiKeysFiltersPopover } from "@/features/admin-analytics/ui/filters/ApiKeysFiltersPopover";
 import { EscrowsFiltersPopover } from "@/features/admin-analytics/ui/filters/EscrowsFiltersPopover";
 import { RevenueFiltersPopover } from "@/features/admin-analytics/ui/filters/RevenueFiltersPopover";
@@ -66,7 +64,6 @@ export const AdminAnalyticsView = () => {
   const [escrowsTopBy, setEscrowsTopBy] = useState<EscrowsTopBy>("amount");
   const [apiKeysTopBy, setApiKeysTopBy] = useState<ApiKeysTopBy>("revenue");
   const revenueFilters = useRevenueFilters();
-  const dataQualityQuery = useDataQuality();
 
   const handleRangeChange = useCallback((nextRange: AnalyticsRange) => {
     setRange(nextRange);
@@ -91,8 +88,6 @@ export const AdminAnalyticsView = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <DataQualityBanner data={dataQualityQuery.data} />
-
       <Suspense fallback={<AdminAnalyticsSkeleton />}>
         <AnalyticsTabs
           activeTab={activeTab}
